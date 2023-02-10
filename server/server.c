@@ -49,7 +49,6 @@ int server(void)
     }
     int connect = 0;
     char buf[BUFFER_SIZE] ;
-    printf("listen client");
     while(1) {
         // Accept an incoming connection
         int cfd = accept(sfd, NULL, NULL);
@@ -81,7 +80,6 @@ int server(void)
         if (cfd == -1) {
             errx(EXIT_FAILURE, "accept failed.");
         }
-        printf("number of Connected: %i.\n",++connect);
     }
 
 } 
