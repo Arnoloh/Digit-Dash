@@ -11,7 +11,6 @@ int server(void)
     hints.ai_family = AF_INET; // IPv4
     hints.ai_socktype = SOCK_STREAM; // TCP
     hints.ai_flags = AI_PASSIVE; // Server
-                                 // Get the linked list
     struct addrinfo* result;
     int err = getaddrinfo(NULL, "13080", &hints, &result);
     if (err != 0) {
