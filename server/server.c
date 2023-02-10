@@ -1,3 +1,4 @@
+#include <string.h>
 #define _GNU_SOURCE
 #include <stdio.h>
 #include "server.h"
@@ -49,6 +50,7 @@ int server(void)
     }
     int connect = 0;
     char buf[BUFFER_SIZE] ;
+    char *messagesend="received\n";
     while(1) {
         // Accept an incoming connection
         int cfd = accept(sfd, NULL, NULL);
@@ -61,11 +63,9 @@ int server(void)
         {
             close(sfd);
             int a = 0;
-            do{
-                a = read(cfd,buf,BUFFER_SIZE);
-                write(0,buf,a);
-            }while (a>0);
-
+            a = read(cfd,buf,BUFFER_SIZE);
+            write(0,buf,a);
+            write(cfd,messagesend,strlen(messagesend));
             // Process data (read/write)
             close(cfd);
             exit(EXIT_SUCCESS);
