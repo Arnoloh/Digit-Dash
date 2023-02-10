@@ -1,6 +1,4 @@
-#include <string.h>
 #define _GNU_SOURCE
-#include <stdio.h>
 #include "server.h"
 #define BUFFER_SIZE 128
 int server(void)
