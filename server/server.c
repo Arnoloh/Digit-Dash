@@ -45,8 +45,10 @@ int server(void)
         exit(EXIT_FAILURE);
 
     }
-    int connect = 0;
     char buf[BUFFER_SIZE] ;
+    int fd = open("log.txt",O_WRONLY | O_APPEND); 
+    if (fd == -1)
+        errx(1,"error opening file");
     char *messagesend="received\n";
     while(1) {
         // Accept an incoming connection
@@ -61,7 +63,7 @@ int server(void)
             close(sfd);
             int a = 0;
             a = read(cfd,buf,BUFFER_SIZE);
-            write(0,buf,a);
+            write(fd,buf,a);
             write(cfd,messagesend,strlen(messagesend));
             // Process data (read/write)
             close(cfd);
@@ -69,6 +71,7 @@ int server(void)
         }
         else
         {
+            close(fd);
             close(cfd);
             close(sfd);
             errx(1,"error");
@@ -78,5 +81,7 @@ int server(void)
             errx(EXIT_FAILURE, "accept failed.");
         }
     }
+    close(fd);
+    return 0;
 
 } 
