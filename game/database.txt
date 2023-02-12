@@ -1,0 +1,6 @@
+if (a>=b) 
+{ 
+    return 0 
+} 
+if (a==b) 
+if ui
