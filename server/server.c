@@ -8,20 +8,17 @@ void error(const char *message) {
 	exit(1);
 }
 
-void handle_connection(int cfd){
-	int fd = open("log.txt",O_WRONLY | O_APPEND);
-	if (fd == -1)
-		errx(1,"error opening file");
+void handle_connection(int cfd,FILE *fd){
 	int read_size;
 	char client_message[BUFFER_SIZE];
 	while( (read_size = recv(cfd , client_message , BUFFER_SIZE , 0)) > 0 ) {
-		write(fd,client_message,read_size);
+        fprintf(fd,"%s",client_message);
 		write(cfd , "received\n" , strlen("received\n"));
 		bzero(client_message,BUFFER_SIZE);
 	}
 }
 int server() {
-	FILE *fd = fopen("log.txt","wa");
+	FILE *fd = fopen("log.txt","a");
 	int server_socket, client_socket, pid;
 	socklen_t client_len;
 	struct sockaddr_in server_address, client_address;
@@ -56,7 +53,7 @@ int server() {
 		if (pid == 0)  {
 			close(server_socket);
 			fprintf(fd,"Client connected: %i\n",client_socket);
-			handle_connection(client_socket);
+			handle_connection(client_socket,fd);
 			close(client_socket);
 			fprintf(fd,"Client disconnected: %i\n",client_socket);
 			exit(0);
