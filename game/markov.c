@@ -81,7 +81,7 @@ int indexofword(struct inlist *ans)
 char *findword(struct list *list, struct inlist *ans)
 {
     int c = indexofword(ans);
-    for (int i=0; i<c; i++)
+    for (int i=0; i<c+1; i++)
     {
         list=list->next;
     }
@@ -247,17 +247,6 @@ int findIndex(const char *string, char *word)
     return -1;
 }*/
 
-int equalword(char *word1, char *word2)
-{
-    if (word1==word2)
-    {
-        return 0;
-    }
-    else
-    {
-        return -1;
-    }
-}
 
 struct inlist *create_index_list(char *word, struct list *list) 
 {
@@ -267,8 +256,6 @@ struct inlist *create_index_list(char *word, struct list *list)
     struct list *a=list;
     while (a != NULL)
     {
-        printf("%s == %s",a->value,word);
-        printf(" %d\n",strcmp(word,a->value));
         if (strcmp(word, a->value) == 0)
         {
                 struct inlist *node = malloc(sizeof(struct inlist));
@@ -294,14 +281,14 @@ struct inlist *create_index_list(char *word, struct list *list)
     return result;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     char *file=filetochar("database.txt");
-    char arr[100];
-    strcpy(arr, file);
-    struct list* list = chartolist(arr);
-    struct inlist *index = create_index_list("if",list);
-    print_list(list);
+    remove_newline(file);
+    struct list *list=chartolist(file);
+    struct inlist *inlist=create_index_list(argv[1],list);
+    char *ans=findword(list,inlist);
+    printf("%s\n",ans);
     //print_list(list);
     //print_inlist(index);   
 }

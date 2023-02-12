@@ -1,6 +1,9 @@
+if (a)
 if (a>=b) 
 { 
     return 0 
 } 
+return 4; 
 if (a==b) 
-if ui
+if (a>b) 
+if (a<b)
