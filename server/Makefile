@@ -8,15 +8,15 @@ SRC = ${wildcard *.c}
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-all: main
+all: server
 
 -include ${DEP}
 
-main: ${OBJ}
+server: ${OBJ}
 	$(CC) ${CFLAGS} ${CPPFLAGS} $^  -o $@
 	
 
 .PHONY:all clean
 
 clean:
-	${RM} -r  ${OBJ} ${DEP} main
+	${RM} -r  ${OBJ} ${DEP} server
