@@ -6,4 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
-int u2u(void);
+#include <arpa/inet.h>
+void u2u(void);
+
+struct message {
+    int id;
+    char *message;
+    char *name;
+};

@@ -1,56 +1,77 @@
 #define _GNU_SOURCE
 #include "chat.h"
 #define BUFFER_SIZE 128
-
-void u2u(void){
-    char buf[BUFFER_SIZE];
+static int id = 0;
+struct message init_message(char *name, char *message, int id)
+{
+    struct message *m = malloc(sizeof(struct message));
+    m->id = id;
+    m->name = strdup(name);
+    m->message = strdup(message);
+    return *m;
+}
+void free_message(struct message *msg)
+{
+    free(msg->name);
+    free(msg->message);
+    free(msg);
+}
+void u2u(void)
+{
+    char buffer[BUFFER_SIZE];
     int sock;
     struct sockaddr_in server;
-    char message[1000] , server_reply[2000];
-    
+    char message[100], server_reply[2000], name[20], sender[2050];
+    ;
     // Créez le socket
-    sock = socket(AF_INET , SOCK_STREAM , 0);
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
     {
         printf("Could not create socket");
     }
     puts("Socket created");
-    
+
     server.sin_addr.s_addr = inet_addr("82.65.173.135");
     server.sin_family = AF_INET;
-    server.sin_port = htons( 13080 );
-    
+    server.sin_port = htons(13080);
+
     // Connectez le socket au serveur
-    if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+    if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0)
     {
         perror("connect failed. Error");
-        return 1;
+        return;
     }
+    printf("Enter your name: ");
+    bzero(name, 20);
+    fgets(name, 20, stdin);
     
     puts("Connected\n");
-    
+    struct message msg;
     // Boucle pour envoyer et recevoir des messages
-    while(1)
+    while (1)
     {
         printf("Enter message : ");
-        scanf("%s" , message);
-        
-        // Envoyez un message au serveur
-        if( send(sock , message , strlen(message) , 0) < 0)
+        bzero(message, 100);
+        fgets(message, 100, stdin);
+
+        bzero(buffer, BUFFER_SIZE);
+        strcat(buffer, name);
+        buffer[strlen(name) - 1] = '\0';
+        strcat(buffer, ": ");
+        strcat(buffer, message);
+        if (send(sock, buffer, BUFFER_SIZE, 0) < 0)
         {
             puts("Send failed");
-            return 1;
+            return;
         }
         puts("Data Send\n");
-        
+
         // Receive a reply from the server
-        if( recv(sock , server_reply , 2000 , 0) < 0)
+        if (recv(sock, server_reply, 2000, 0) < 0)
         {
             puts("recv failed");
         }
         puts("Reply received\n");
         puts(server_reply);
     }
-    
-    return 0;
 }
