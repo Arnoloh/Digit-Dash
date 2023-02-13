@@ -1,5 +1,6 @@
 #pragma once
 #include <netdb.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <err.h>
