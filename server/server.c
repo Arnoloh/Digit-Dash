@@ -12,7 +12,8 @@ void handle_connection(int cfd,FILE *fd){
 	int read_size;
 	char client_message[BUFFER_SIZE];
 	while( (read_size = recv(cfd , client_message , BUFFER_SIZE , 0)) > 0 ) {
-        fprintf(fd,"%s",client_message);
+		fprintf(fd,"%s\n",client_message);
+		fflush(fd);
 		write(cfd , "received\n" , strlen("received\n"));
 		bzero(client_message,BUFFER_SIZE);
 	}
