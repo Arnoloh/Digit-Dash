@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+<head>
+    <title>Ressources</title>
+</head>
+<body>
+<header class="ba">
+    <a href="index.html" class="logo2">Digit-Dash</a>
+    <div class="menuToggle2" onclick="toggleMenu2();"></div>
+    <ul class="navbar">
+        <li><a href="index.html" class="m" onclick="toggleMenu();">Accueil</a></li>
+    <li><a href="Gameplay.html" class="m" onclick="toggleMenu();">Gameplay</a></li>
+    <li><a href="Chat.html" class="m" onclick="toggleMenu();">Le chat</a></li>
+    <li><a href="nc.php" class="m" onclick="toggleMenu();">Nous contacter</a></li>
+    <li><a href="Ressources.html" class="m" onclick="toggleMenu();">Ressources</a></li>
+    <a href="https://cdn.discordapp.com/attachments/887598498151821353/983207895200055316/TimeOsetup.exe" class="Jouer" onclick="toggleMenu();">Jouer</a>
+    </ul>
+</header>
+<script type="text/javascript">
+
+
+    function toggleMenu(){
+        const menuToggle = document.querySelector('.menuToggle');
+        const navbar = document.querySelector('.navbar');
+        navbar.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    }
+</script>
+<div class="container-fluid mas " >
+    <div class="container">
+        <div class="row">
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <p>Cahier des charges</p>
+            </article>
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3  ">
+                <p>Soutenance 1</p>
+            </article>
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <p>Soutenance 2</p>
+            </article>
+             <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <p>GitHub</p>
+            </article>
+
+        </div>
+    </div>
+</div>
+<div class="container-fluid las " >
+    <div class="container">
+        <div class="row">
+
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <a href="ressources/Cahier_des_charges._s4_1.pdf" class="Jouer jj" onclick="toggleMenu();">Aper&#231u</a>
+            </article>
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3  ">
+                <a href="" class="Jouer jj" onclick="toggleMenu();">Aper&#231u</a>
+            </article>
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <a href="" class="Jouer jj" onclick="toggleMenu();">Aper&#231u</a>
+            </article>
+            <article class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                <a href="https://github.com/Arnoloh/Digit-Dash" class="Jouer jj" onclick="toggleMenu();">Aper&#231u</a>
+            </article>
+            
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

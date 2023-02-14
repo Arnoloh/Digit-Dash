@@ -1,0 +1,5 @@
+if (first_level_work == 1)
+{
+printf("let gooooo");
+return 0;
+}
