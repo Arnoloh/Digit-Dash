@@ -6,7 +6,7 @@ for (int i=0; i<50; i++)
         break; 
     } 
 } 
-for (int j=1; j>12; j*=2) 
+for (int j=1; j>12; j*=2)  
 {
     for (int y=2; y<j; y++) 
     {
@@ -39,7 +39,7 @@ while (i<(list(len)+1))
         }
         if (i+y==0) 
         {
-            return i+j; 
+            return i*j; 
         }
         if (i-y!=0) 
         {
@@ -49,7 +49,7 @@ while (i<(list(len)+1))
         {
             return "superior"; 
         }
-        printf("i and j modulo 2") 
+        printf("i and j modulo 2"); 
         j++; 
     }
     i++; 
