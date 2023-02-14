@@ -71,7 +71,7 @@ void u2u(void)
         {
             puts("recv failed");
         }
-        puts("Reply received\n");
+        puts("Reply from the server :\n");
         puts(server_reply);
     }
 }
