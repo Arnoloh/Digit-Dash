@@ -100,62 +100,6 @@ void remove_newline(char *str)
 
     str[j] = '\0';
 }
-void print_list(struct list *list)
-{
-    int line = 1;
-
-    printf("[");
-    if (list->next)
-    {
-        goto pastfst;
-        while (list->next)
-        {
-            line += printf(";");
-
-            if (line > 72)
-            {
-                printf("\n ");
-                line = 1;
-            }
-
-            pastfst:
-            char *temp=list->next->value;
-            if (strchr(temp,'\n') != NULL) remove_newline(temp);
-            line += printf(" %2s", temp);
-            list = list->next;
-        }
-    }
-
-    printf(" ]\n");
-}
-
-void print_inlist(struct inlist *list)
-{
-    int line = 1;
-
-    printf("[");
-    if (list->next)
-    {
-        goto pastfst;
-        while (list->next)
-        {
-            line += printf(";");
-
-            if (line > 72)
-            {
-                printf("\n ");
-                line = 1;
-            }
-
-            pastfst:
-            line += printf(" %2d", list->next->value);
-            list = list->next;
-        }
-    }
-
-    printf(" ]\n");
-}
-
 char *filetochar(char *filename)
 {
     FILE *file = fopen(filename, "r");
