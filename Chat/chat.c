@@ -63,13 +63,13 @@ void u2u(void)
             return;
         }
         puts("Data Send\n");
-
+        int r=recv(sock, server_reply, 2000, 0);
         // Receive a reply from the server
-        if (recv(sock, server_reply, 2000, 0) < 0)
+        if (r < 0)
         {
             puts("recv failed");
         }
-        puts("Reply from the server :\n");
-        puts(server_reply);
+       
+        write(0,server_reply, r);
     }
 }
