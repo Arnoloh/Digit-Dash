@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
 #include "chat.h"
 #define BUFFER_SIZE 128
-static int id = 0;
 struct message init_message(char *name, char *message, int id)
 {
     struct message *m = malloc(sizeof(struct message));
@@ -21,7 +20,7 @@ void u2u(void)
     char buffer[BUFFER_SIZE];
     int sock;
     struct sockaddr_in server;
-    char message[100], server_reply[2000], name[20], sender[2050];
+    char message[100], server_reply[2000], name[20];
     ;
     // Créez le socket
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,7 +45,6 @@ void u2u(void)
     fgets(name, 20, stdin);
     
     puts("Connected\n");
-    struct message msg;
     // Boucle pour envoyer et recevoir des messages
     while (1)
     {
