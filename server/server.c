@@ -41,7 +41,7 @@ int server() {
 
 	listen(server_socket, MAX_CLIENTS);
 	client_len = sizeof(client_address);
-
+    printf("Waiting for connections...\n");
 	while (1) {
 		client_socket = accept(server_socket, (struct sockaddr *) &client_address, &client_len);
 		if (client_socket < 0) 
@@ -53,13 +53,14 @@ int server() {
 
 		if (pid == 0)  {
 			close(server_socket);
-			fprintf(fd,"Client connected: %i\n",client_socket);
+			fprintf(fd,"Client connected: %i\n",getpid());
 			handle_connection(client_socket,fd);
 			close(client_socket);
-			fprintf(fd,"Client disconnected: %i\n",client_socket);
+			fprintf(fd,"Client disconnected: %i\n",getpid());
 			exit(0);
 		}
 		else 
+            signal(SIGCHLD,SIG_IGN);
 			close(client_socket);
 	}
 
