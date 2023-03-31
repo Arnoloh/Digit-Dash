@@ -1,80 +1,110 @@
 #include "tools.h"
-char *serialize(void *buf, size_t size)
+enum TYPE{
+    Game,
+    Chat,
+};
+typedef struct{
+    enum TYPE type;
+    int id;
+} Generic;
+typedef struct{
+    Generic info;
+    char * Message;
+} Chat_info;
+typedef struct{
+    Generic info;
+    char test;
+    int in_info;
+} info_game;
+#define CAST_GENERIC_PTR(generic_ptr) \
+    ((generic_ptr)->type == Game ? (info_game *)(generic_ptr) : \
+     (generic_ptr)->type == Chat ? (Chat_info *)(generic_ptr) : NULL)
+char *serialize(Generic *buf)
 {
-    char *result = (char *)malloc(MAX_STRING_LENGTH * sizeof(char));
-    switch (size)
-    {
-    case sizeof(struct info_game):
-    {
-        info_game *buffer = (info_game *)buf;
-        sprintf(result, "%d,%c,%c", buffer->id, buffer->info, buffer->Hello);
-        break;
-    }
-    case sizeof(struct chat):
-    {
-        chat *buffer = (chat *)buf;
-        sprintf(result, "%d,\"%s\"", buffer->id, buffer->message);
-        break;
-    }
+    switch (buf->type){
+        case Game:
+            {
+                info_game *game = (info_game *) buf;
+                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1));
+                sprintf(str, "%i,%c,%i", game->info.id, game->test, game->in_info); 
+                return str;
+            }
+        case Chat:
+            {
+                Chat_info *game = (Chat_info *) buf;
+                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\"", game->info.id, game->Message) + 1));
+                sprintf(str, "%i,\"%s\"", game->info.id, game->Message); 
+                return str;
 
-    default:
-        break;
+            }
+        default:
+            return NULL;
     }
-
-    return result;
 }
-
-// Fonction de désérialisation générique
-void *deserialize(const char *str)
+Generic *deserialize(const char *str)
 {
-    void *ptr = NULL;
+    int type_id;
 
-    // Récupération du code numérique en début de chaîne
-    int code = str[0] - '0';
+    type_id = str[0] - '0';
 
-    // Utilisation de sscanf pour extraire les valeurs des champs de la structure correspondante
-    switch (code)
+    if (type_id == 0) // info_game
     {
-    case 0:
+        info_game *game = malloc(sizeof(info_game));
+        sscanf(str, "%d,%c,%i", &game->info.id, &game->test, &game->in_info);
+
+        game->info.type = Game;
+
+        return (Generic *)game;
+    }
+    else if (type_id == 1) // Chat_info
     {
-        struct chat *c = (struct chat *)malloc(sizeof(struct chat));
-        c->message = (char *)malloc(sizeof(char) * 100);
+        Chat_info *chat = malloc(sizeof(Chat_info));
 
-        sscanf(str, "%d,%[^,]", &c->id, c->message);
+        int message_length;
+        sscanf(str, "%*d,%*d,%n", &message_length);
 
-        ptr = (void *)c;
-        break;
+        char *tempMessage = malloc(message_length + 1);
+
+        sscanf(str, "%i,%[^,]", &chat->info.id, tempMessage);
+
+        chat->Message = tempMessage;
+
+        chat->info.type = Chat;
+
+        return (Generic *)chat;
     }
-    case 1:
+    else
     {
-        struct info_game *ig = (struct info_game *)malloc(sizeof(struct info_game));
-
-        sscanf(str, "%d,%c,%c", &ig->id, &ig->info, &ig->Hello);
-
-        ptr = (void *)ig;
-        break;
+        return NULL;
     }
-    }
-    return ptr;
 }
 
 int main()
 {
-    // Initialisation des structures
-    struct chat c = {0, "Bonjour !"};
+    Generic gen = {Chat,Chat};
+    Chat_info game = {gen,"Hello World !"};
+    char *str = serialize ((Generic *) &game);
+    printf("%s\n",str);
+    Generic *deserialized = deserialize(str);
+    if (deserialized->type == Game)
+    {
+        info_game *game = (info_game *)deserialized;
+        printf("Game structure:\n");
+        printf("ID: %d\n", game->info.id);
+        printf("Test: %c\n", game->test);
+        printf("In_info: %d\n", game->in_info);
+    }
+    else if (deserialized->type == Chat)
+    {
+        Chat_info *chat = (Chat_info *)deserialized;
+        printf("\nChat structure:\n");
+        printf("ID: %d\n", chat->info.id);
+        printf("Message: %s\n", chat->Message);
+    }
 
-    // Sérialisation des structures
-    char *str2 = serialize(&c, sizeof(chat));
+    free(((Chat_info *)deserialized)->Message);
+    free(deserialized);
+    free(str);
 
-    // Affichage des chaînes de caractères
-    printf("Structure info_game sérialisée: %s\n", str2);
-
-    // Désérialisation des chaînes de caractères
-    void *ptr2 = deserialize(str2);
-
-    // Conversion des pointeurs en pointeurs de structure
-    struct chat *c2 = (struct chat *)ptr2;
-
-    // Affichage des valeurs des champs de la structure désérialisée
-    printf("id: %d, message: %s\n", c2->id, c2->message);
+    return 0;
 }
