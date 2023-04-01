@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "../tools/tools.h"
+
 void u2u(void);
 
 struct message {
