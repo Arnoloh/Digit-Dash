@@ -16,6 +16,9 @@ body{
 .scen{
     margin-top:150px ;
 }
+.container-fluid{
+    margin-top: 3%;
+}
 header{
     position: fixed;
     top: 0%;
@@ -352,7 +355,11 @@ header.sticky{
     text-decoration: none;
     font-weight: 700;
 }
-#20c997 {
+.ju:hover{
+    color: black;
+}
+.red {
+    margin-top: 2%;
     text-align: center;
     align-items: center;
     color: #ffffff;
@@ -378,6 +385,7 @@ header.sticky{
 
 .haut{
 	width:100%;
+    margin-bottom: 5%;
 }
 #button{
 	z-index: 1;
