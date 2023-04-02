@@ -1,6 +1,6 @@
 #Makefile
 CC = gcc -g
-CPPFLAGS = -fsanitize=address
+CPPFLAGS =  -pthread
 CFLAGS = -Wall -Wextra -std=c99
 
 
