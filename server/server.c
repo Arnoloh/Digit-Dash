@@ -48,7 +48,7 @@ int find_fd(Game *ALL_GAME, int pid)
             return game->player_one;
         }
     }
-    printf("not found\n");
+    // s// printf("not found\n");
     return 0;
 }
 void add_player(Game *ALL_GAME, int pid)
@@ -92,7 +92,7 @@ void error(const char *message)
 //             break;
 //         if (read_size < 0)
 //         {
-//             printf("ERROR PIP READING\n");
+// s//             printf("ERROR PIP READING\n");
 //         }
 //         sscanf(message, "%s:", name);
 //         for (int i = 0; i < 20; i++)
@@ -103,11 +103,11 @@ void error(const char *message)
 //             }
 //         if (strcmp(name, thread_args->Chat->name) == 0)
 //         {
-//             printf("continue\n");
+// s//             printf("continue\n");
 //             lseek(pip[0], -read_size, SEEK_CUR);
 //             continue;
 //         }
-//         printf("send to another client\n");
+// s//         printf("send to another client\n");
 //         write(cfd, message, strlen(message));
 //     }
 
@@ -223,7 +223,7 @@ int server()
 
     listen(server_socket, MAX_CLIENTS);
     client_len = sizeof(client_address);
-    printf("Waiting for connections...\n");
+    // sprintf("Waiting for connections...\n");
     while (1)
     {
         client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_len);
