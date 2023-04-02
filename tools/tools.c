@@ -10,6 +10,7 @@ typedef struct{
 typedef struct{
     Generic info;
     char * Message;
+    char * name;
 } Chat_info;
 typedef struct{
     Generic info;
@@ -32,8 +33,8 @@ char *serialize(Generic *buf)
         case Chat:
             {
                 Chat_info *game = (Chat_info *) buf;
-                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\"", game->info.id, game->Message) + 1));
-                sprintf(str, "%i,\"%s\"", game->info.id, game->Message); 
+                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name) + 1));
+                sprintf(str, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name); 
                 return str;
 
             }
@@ -60,18 +61,16 @@ Generic *deserialize(const char *str)
     {
         Chat_info *chat = malloc(sizeof(Chat_info));
 
-        int message_length;
-        sscanf(str, "%*d,%*d,%n", &message_length);
+        chat->Message = malloc(100 * sizeof(char));
+        chat->name = malloc(20 * sizeof(char));
 
-        char *tempMessage = malloc(message_length + 1);
-
-        sscanf(str, "%i,%[^,]", &chat->info.id, tempMessage);
-
-        chat->Message = tempMessage;
+        sscanf(str, "%i,\"%99[^\"]\",\"%19[^\"]\"", &chat->info.id, chat->Message, chat->name);
 
         chat->info.type = Chat;
 
         return (Generic *)chat;
+        
+        
     }
     else
     {
