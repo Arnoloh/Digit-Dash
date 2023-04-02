@@ -22,7 +22,7 @@ size_t INITIAL = 5;
 
 Game *init_game()
 {
-    Game *all_game = calloc(1, sizeof(Game));
+   Game *all_game = calloc(INITIAL, sizeof(Game));
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &all_game[i];

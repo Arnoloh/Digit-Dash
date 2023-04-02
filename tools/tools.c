@@ -1,29 +1,15 @@
 #include "tools.h"
-enum TYPE{
-    Game,
-    Chat,
-};
-typedef struct{
-    enum TYPE type;
-    int id;
-} Generic;
-typedef struct{
-    Generic info;
-    char * Message;
-    char * name;
-} Chat_info;
+
 typedef struct{
     Generic info;
     char test;
     int in_info;
 } info_game;
-#define CAST_GENERIC_PTR(generic_ptr) \
-    ((generic_ptr)->type == Game ? (info_game *)(generic_ptr) : \
-     (generic_ptr)->type == Chat ? (Chat_info *)(generic_ptr) : NULL)
+
 char *serialize(Generic *buf)
 {
     switch (buf->type){
-        case Game:
+        case Game_info:
             {
                 info_game *game = (info_game *) buf;
                 char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1));
@@ -53,7 +39,7 @@ Generic *deserialize(const char *str)
         info_game *game = malloc(sizeof(info_game));
         sscanf(str, "%d,%c,%i", &game->info.id, &game->test, &game->in_info);
 
-        game->info.type = Game;
+        game->info.type = Game_info;
 
         return (Generic *)game;
     }
@@ -78,32 +64,32 @@ Generic *deserialize(const char *str)
     }
 }
 
-int main()
-{
-    Generic gen = {Chat,Chat};
-    Chat_info game = {gen,"Hello World !"};
-    char *str = serialize ((Generic *) &game);
-    printf("%s\n",str);
-    Generic *deserialized = deserialize(str);
-    if (deserialized->type == Game)
-    {
-        info_game *game = (info_game *)deserialized;
-        printf("Game structure:\n");
-        printf("ID: %d\n", game->info.id);
-        printf("Test: %c\n", game->test);
-        printf("In_info: %d\n", game->in_info);
-    }
-    else if (deserialized->type == Chat)
-    {
-        Chat_info *chat = (Chat_info *)deserialized;
-        printf("\nChat structure:\n");
-        printf("ID: %d\n", chat->info.id);
-        printf("Message: %s\n", chat->Message);
-    }
+// int main()
+// {
+//     Generic gen = {Chat,Chat};
+//     Chat_info game = {gen,"Hello World !"};
+//     char *str = serialize ((Generic *) &game);
+//     printf("%s\n",str);
+//     Generic *deserialized = deserialize(str);
+//     if (deserialized->type == Game_info)
+//     {
+//         info_game *game = (info_game *)deserialized;
+//         printf("Game structure:\n");
+//         printf("ID: %d\n", game->info.id);
+//         printf("Test: %c\n", game->test);
+//         printf("In_info: %d\n", game->in_info);
+//     }
+//     else if (deserialized->type == Chat)
+//     {
+//         Chat_info *chat = (Chat_info *)deserialized;
+//         printf("\nChat structure:\n");
+//         printf("ID: %d\n", chat->info.id);
+//         printf("Message: %s\n", chat->Message);
+//     }
 
-    free(((Chat_info *)deserialized)->Message);
-    free(deserialized);
-    free(str);
+//     free(((Chat_info *)deserialized)->Message);
+//     free(deserialized);
+//     free(str);
 
-    return 0;
-}
+//     return 0;
+// }
