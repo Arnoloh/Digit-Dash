@@ -1,9 +1,0 @@
-Client connected: 5
-arnaud: Hi
-Client connected: 6
-Hello: hi
-arnaud: hello
-Client disconnected: 6
-arnaud: he
-arnaud: ho
-arnaud: hl
