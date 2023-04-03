@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include "chat.h"
 #define BUFFER_SIZE 128
 #include <pthread.h>
@@ -9,15 +8,17 @@ void *send_message(void *arg)
     int *sock = (int *)arg;
     char message[100], name[20];
 
-    printf("Enter your name: ");
     bzero(name, 20);
     fgets(name, 20, stdin);
+    name[strcspn(name, "\n")] = '\0'; // remove newline character
 
     while (1)
     {
-        printf("Enter message: ");
+        printf("%s:", name);
+        fflush(stdout);
         bzero(message, 100);
         fgets(message, 100, stdin);
+        fflush(stdin);
 
         Chat_info chat;
         chat.info.type = Chat;
@@ -31,7 +32,6 @@ void *send_message(void *arg)
             puts("Send failed");
             return NULL;
         }
-        puts("Data Send\n");
         free(serialized_msg);
     }
 }
@@ -56,7 +56,6 @@ void *receive_message(void *arg)
 
     return NULL;
 }
-
 
 void u2u(void)
 {
@@ -95,6 +94,8 @@ void u2u(void)
 
     close(sock);
 }
+
+
 /*
 void free_message(struct message *msg)
 {
