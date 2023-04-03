@@ -96,7 +96,6 @@ void client_disconnected(Game *ALL_GAME, int pid)
     }
 }
 
-
 void *worker_message(void *args)
 {
     struct thread_data *thread_args = args;
@@ -128,7 +127,7 @@ void *worker_message(void *args)
         if (e < 0)
         {
             write(cfd, "Your friend is disconnected.\n", strlen("Your friend is disconnected.\n"));
-            client_disconnected(ALL_GAME,second_cfd);
+            client_disconnected(ALL_GAME, second_cfd);
             second_cfd = 0;
 
             continue;
@@ -176,6 +175,7 @@ void *handle_connection(void *args)
         {
             fprintf(fd, "Client disconnected: %i\n", cfd);
             fflush(fd);
+            client_disconnected(targs->ALL_GAME, cfd);
             break;
         }
     }
