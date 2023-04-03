@@ -1,10 +1,10 @@
 #Makefile
 CC = gcc -g
 CPPFLAGS = -fsanitize=address
-CFLAGS+= -I/path/to/parent/directory/of/tools -Wall -Werror -g -fsanitize=address
+CFLAGS+= -Wall -Werror -g -fsanitize=address
 
 
-SRC = ${wildcard *.c}
+SRC = main.c chat.c ../tools/tools.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

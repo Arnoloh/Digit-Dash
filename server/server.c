@@ -22,7 +22,7 @@ size_t INITIAL = 5;
 
 Game *init_game()
 {
-   Game *all_game = calloc(INITIAL, sizeof(Game));
+    Game *all_game = calloc(INITIAL, sizeof(Game));
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &all_game[i];
@@ -77,43 +77,26 @@ void error(const char *message)
     exit(1);
 }
 
-// void *worker_message_reading(void *args)
-// {
-//     struct thread_data *thread_args = args;
-//     int cfd = thread_args->client_socket;
-//     Game *ALL_GAME = thread_args->ALL_GAME;
-//     int *pip = find_fd(ALL_GAME, cfd);
-//     char message[BUFFER_SIZE];
-//     int read_size;
-//     char name[20];
-//     while ((read_size = read(pip[0], message, BUFFER_SIZE)) > 0)
-//     {
-//         if (read_size == 0)
-//             break;
-//         if (read_size < 0)
-//         {
-// s//             printf("ERROR PIP READING\n");
-//         }
-//         sscanf(message, "%s:", name);
-//         for (int i = 0; i < 20; i++)
-//             if (name[i] == ':')
-//             {
-//                 name[i] = '\0';
-//                 break;
-//             }
-//         if (strcmp(name, thread_args->Chat->name) == 0)
-//         {
-// s//             printf("continue\n");
-//             lseek(pip[0], -read_size, SEEK_CUR);
-//             continue;
-//         }
-// s//         printf("send to another client\n");
-//         write(cfd, message, strlen(message));
-//     }
+void client_disconnected(Game *ALL_GAME, int pid)
+{
+    for (size_t i = 0; i < INITIAL; i++)
+    {
+        Game *game = &ALL_GAME[i];
 
-//     pthread_exit(NULL);
-//     return NULL;
-// }
+        if (game->player_one == pid)
+        {
+            game->player_two = 0;
+            return;
+        }
+        if (game->player_two == pid)
+        {
+            game->player_one = 0;
+            return;
+        }
+    }
+}
+
+
 void *worker_message(void *args)
 {
     struct thread_data *thread_args = args;
@@ -127,7 +110,7 @@ void *worker_message(void *args)
     char buffer[BUFFER_SIZE] = {0};
     while ((read_size = recv(cfd, client_message, BUFFER_SIZE, 0)) > 0)
     {
-        second_cfd = find_fd(ALL_GAME, cfd);
+
         if (read_size == 0)
             break;
         strcpy(buffer, thread_args->Chat->name);
@@ -135,7 +118,7 @@ void *worker_message(void *args)
         strcat(buffer, client_message);
         fprintf(fd, "%s: %s", thread_args->Chat->name, client_message);
         fflush(fd);
-
+        second_cfd = find_fd(ALL_GAME, cfd);
         if (second_cfd == 0)
         {
             write(cfd, "No one is connected.\n", strlen("No one is connected.\n"));
@@ -145,7 +128,9 @@ void *worker_message(void *args)
         if (e < 0)
         {
             write(cfd, "Your friend is disconnected.\n", strlen("Your friend is disconnected.\n"));
+            client_disconnected(ALL_GAME,second_cfd);
             second_cfd = 0;
+
             continue;
         }
         bzero(client_message, BUFFER_SIZE);
@@ -165,7 +150,7 @@ void *handle_connection(void *args)
 
     pthread_t th;
 
-    char *server_ask = "server: Give me a name: ";
+    char *server_ask = "Server: Give me a name: ";
     write(cfd, server_ask, strlen(server_ask));
     char name[20] = {0};
     read(cfd, name, 20);
@@ -178,7 +163,6 @@ void *handle_connection(void *args)
 
     Chat_info player_chat = {{Chat, Chat}, name, NULL};
     targs->Chat = &player_chat;
-
 
     fprintf(fd, "Client connected: %i\n", cfd);
 

@@ -19,3 +19,5 @@ typedef struct
     char *name; 
     char *Message;
 } Chat_info;
+char *serialize(Generic *buf);
+Generic *deserialize(const char *str);

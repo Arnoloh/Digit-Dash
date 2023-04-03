@@ -13,21 +13,21 @@ char *serialize(Generic *buf)
             {
                 info_game *game = (info_game *) buf;
                 char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1));
-                sprintf(str, "%i,%c,%i", game->info.id, game->test, game->in_info); 
+                snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1), "%i,%c,%i", game->info.id, game->test, game->in_info); 
                 return str;
             }
         case Chat:
             {
                 Chat_info *game = (Chat_info *) buf;
                 char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name) + 1));
-                sprintf(str, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name); 
+                snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name) + 1), "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name); 
                 return str;
-
             }
         default:
             return NULL;
     }
 }
+
 Generic *deserialize(const char *str)
 {
     int type_id;

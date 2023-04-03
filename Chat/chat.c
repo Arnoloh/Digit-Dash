@@ -1,163 +1,112 @@
-#include "chat.h"
-#define BUFFER_SIZE 128
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <arpa/inet.h>
 #include <pthread.h>
-#include "../tools/tools.c"
 
-void *send_message(void *arg)
+#define PORT 13080
+#define IP "127.0.0.1"
+#define BUFFER_SIZE 256
+
+void *read_from_server(void *arg)
 {
-    int *sock = (int *)arg;
-    char message[100], name[20];
-
-    bzero(name, 20);
-    fgets(name, 20, stdin);
-    name[strcspn(name, "\n")] = '\0'; // remove newline character
+    int sockfd = *(int *)arg;
+    char buffer[BUFFER_SIZE];
 
     while (1)
     {
-        printf("%s:", name);
-        fflush(stdout);
-        bzero(message, 100);
-        fgets(message, 100, stdin);
-        fflush(stdin);
-
-        Chat_info chat;
-        chat.info.type = Chat;
-        chat.info.id = 0;
-        chat.Message = message;
-        chat.name = name;
-
-        char *serialized_msg = serialize((Generic *)&chat);
-        if (send(*sock, serialized_msg, strlen(serialized_msg), 0) < 0)
+        ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+        if (received <= 0)
         {
-            puts("Send failed");
-            return NULL;
-        }
-        free(serialized_msg);
-    }
-}
-
-void *receive_message(void *arg)
-{
-    int *sock = (int *)arg;
-    char server_reply[BUFFER_SIZE];
-
-    while (1)
-    {
-        bzero(server_reply, BUFFER_SIZE);
-        int r = recv(*sock, server_reply, BUFFER_SIZE, 0);
-        if (r < 0)
-        {
-            puts("recv failed");
+            perror("Error reading from server");
             break;
         }
-
-        printf("Server: %s\n", server_reply);
+        buffer[received] = '\0';
+        printf("%s", buffer);
     }
 
     return NULL;
 }
 
-void u2u(void)
+void *write_to_server(void *arg)
 {
-    int sock;
-    struct sockaddr_in server;
-
-    // Create socket
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1)
-    {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
-
-    server.sin_addr.s_addr = inet_addr("82.65.173.135");
-    server.sin_family = AF_INET;
-    server.sin_port = htons(13080);
-
-    // Connect socket to the server
-    if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0)
-    {
-        perror("connect failed. Error");
-        return;
-    }
-
-    puts("Connected\n");
-    fflush(stdout);
-
-    pthread_t send_thread, receive_thread;
-
-    pthread_create(&send_thread, NULL, send_message, (void *)&sock);
-    pthread_create(&receive_thread, NULL, receive_message, (void *)&sock);
-
-    pthread_join(send_thread, NULL);
-    pthread_join(receive_thread, NULL);
-
-    close(sock);
-}
-
-
-/*
-void free_message(struct message *msg)
-{
-    free(msg->name);
-    free(msg->message);
-    free(msg);
-}
-void u2u(void)
-{
+    int sockfd = *(int *)arg;
     char buffer[BUFFER_SIZE];
-    int sock;
-    struct sockaddr_in server;
-    char message[100], server_reply[2000], name[20];
-    ;
-    // Créez le socket
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1)
-    {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
 
-    server.sin_addr.s_addr = inet_addr("82.65.173.135");
-    server.sin_family = AF_INET;
-    server.sin_port = htons(13080);
-
-    // Connectez le socket au serveur
-    if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0)
-    {
-        perror("connect failed. Error");
-        return;
-    }
-    printf("Enter your name: ");
-    bzero(name, 20);
-    fgets(name, 20, stdin);
-    
-    puts("Connected\n");
-    // Boucle pour envoyer et recevoir des messages
     while (1)
     {
-        printf("Enter message : ");
-        bzero(message, 100);
-        fgets(message, 100, stdin);
 
-        bzero(buffer, BUFFER_SIZE);
-        strcat(buffer, name);
-        buffer[strlen(name) - 1] = '\0';
-        strcat(buffer, ": ");
-        strcat(buffer, message);
-        if (send(sock, buffer, BUFFER_SIZE, 0) < 0)
+        fflush(stdout);
+        fgets(buffer, BUFFER_SIZE, stdin);
+        ssize_t sent = send(sockfd, buffer, strlen(buffer), 0);
+        if (sent < 0)
         {
-            puts("Send failed");
-            return;
+            perror("Error writing to server");
+            break;
         }
-        puts("Data Send\n");
-        int r=recv(sock, server_reply, 2000, 0);
-        // Receive a reply from the server
-        if (r < 0)
-        {
-            puts("recv failed");
-        }
-       
-        write(0,server_reply, r);
     }
-}*/
+
+    return NULL;
+}
+
+int main()
+{
+    int sockfd;
+    struct sockaddr_in server_addr;
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+    {
+        perror("Error opening socket");
+        return 1;
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr(IP);
+    server_addr.sin_port = htons(PORT);
+
+    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    {
+        perror("Error connecting to server");
+        return 1;
+    }
+
+    printf("Connected to server\n");
+
+    // Recevoir le message initial du serveur et y répondre
+    char buffer[BUFFER_SIZE];
+    ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+    if (received > 0)
+    {
+        buffer[received] = '\0';
+        printf("%s", buffer);
+
+        fgets(buffer, BUFFER_SIZE, stdin);
+        ssize_t sent = send(sockfd, buffer, strlen(buffer), 0);
+        if (sent < 0)
+        {
+            perror("Error writing to server");
+        }
+    }
+
+    pthread_t read_thread, write_thread;
+
+    if (pthread_create(&read_thread, NULL, read_from_server, (void *)&sockfd) != 0)
+    {
+        perror("Error creating read thread");
+        return 1;
+    }
+
+    if (pthread_create(&write_thread, NULL, write_to_server, (void *)&sockfd) != 0)
+    {
+        perror("Error creating write thread");
+        return 1;
+    }
+
+    pthread_join(read_thread, NULL);
+    pthread_join(write_thread, NULL);
+
+    close(sockfd);
+    return 0;
+}
