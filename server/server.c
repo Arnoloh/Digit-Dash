@@ -51,19 +51,31 @@ int find_fd(Game *ALL_GAME, int pid)
     // s// printf("not found\n");
     return 0;
 }
+void display_games(const Game games[], int num_games)
+{
+    printf("Player One | Player Two\n");
+    printf("-----------|-----------\n");
+    for (int i = 0; i < num_games; i++)
+    {
+        printf("%10d | %10d\n", games[i].player_one, games[i].player_two);
+    }
+}
 void add_player(Game *ALL_GAME, int pid)
 {
+
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
         if (game->player_one == 0)
         {
             game->player_one = pid;
+            // display_games(ALL_GAME, 5);
             return;
         }
         if (game->player_two == 0)
         {
             game->player_two = pid;
+            // display_games(ALL_GAME, 5);
             return;
         }
     }
@@ -79,6 +91,7 @@ void error(const char *message)
 
 void client_disconnected(Game *ALL_GAME, int pid)
 {
+
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
@@ -86,11 +99,13 @@ void client_disconnected(Game *ALL_GAME, int pid)
         if (game->player_one == pid)
         {
             game->player_two = 0;
+            // display_games(ALL_GAME, 5);
             return;
         }
         if (game->player_two == pid)
         {
             game->player_one = 0;
+            // display_games(ALL_GAME, 5);
             return;
         }
     }
@@ -127,9 +142,7 @@ void *worker_message(void *args)
         if (e < 0)
         {
             write(cfd, "Your friend is disconnected.\n", strlen("Your friend is disconnected.\n"));
-            client_disconnected(ALL_GAME, second_cfd);
-            second_cfd = 0;
-
+            // client_disconnected(ALL_GAME, cfd);
             continue;
         }
         bzero(client_message, BUFFER_SIZE);
@@ -175,7 +188,7 @@ void *handle_connection(void *args)
         {
             fprintf(fd, "Client disconnected: %i\n", cfd);
             fflush(fd);
-            client_disconnected(targs->ALL_GAME, cfd);
+            client_disconnected(targs->ALL_GAME, find_fd(targs->ALL_GAME,cfd));
             break;
         }
     }
