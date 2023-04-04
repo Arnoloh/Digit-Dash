@@ -1,0 +1,56 @@
+for (int i=0; i<50; i++) 
+{
+    if (i%2==0) 
+    {
+        printf("Win!"); 
+        break; 
+    } 
+} 
+for (int j=1; j>12; j*=2)  
+{
+    for (int y=2; y<j; y++) 
+    {
+        if (j+y==4) 
+        {
+            return i+j;
+        }
+    }
+} 
+
+switch (color) 
+    case RED: 
+        printf("I'm red\n"); 
+        break; 
+    case GREEN: 
+        printf("I'm green\n"); 
+        break; 
+    default: 
+        printf("I'm not green or red\n"); 
+        break; 
+
+while (i<(list(len)+1)) 
+{
+    int j=0; 
+    while (j+i%2==0) 
+    {
+        if (i==0) 
+        {
+            return; 
+        }
+        if (i+y==0) 
+        {
+            return i*j; 
+        }
+        if (i-y!=0) 
+        {
+            return "negative"; 
+        }
+        if (i*y>i+y) 
+        {
+            return "superior"; 
+        }
+        printf("i and j modulo 2"); 
+        j++; 
+    }
+    i++; 
+} 

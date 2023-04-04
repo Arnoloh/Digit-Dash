@@ -90,8 +90,13 @@ void client()
 		
 		else if(strcmp(message,"quitter") == 0)
 			break;
+		
+		else if(strcmp(message,"entraînement") == 0)
+			system ("../training/display/test");
+		else if(strcmp(message,"multijoueur") == 0)
+			break;
 			
-		if(strcmp(message,"aide") && strcmp(message,"multijoueur") && strcmp(message,"quitter") && strcmp(message,"chat"))
+		else
 		{
 			rewrite(STDOUT_FILENO, "Option invalide. Entrez [aide] pour connaître les options disponibles.\n", strlen("Option invalide. Entrez [aide] pour connaître les options disponibles.\n"));
 		}
