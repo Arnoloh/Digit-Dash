@@ -65,7 +65,7 @@ void welcome()
 void help()
 {
 	rewrite(STDOUT_FILENO, "Menu Principal\n", strlen("Menu Principal\n"));
-	rewrite(STDOUT_FILENO, "[entraînement] --- Affûte ton clavier avant d'abattre l'adversaire\n", strlen("[entraînement] --- Affûte ton clavier avant d'abattre l'adversaire\n"));
+	rewrite(STDOUT_FILENO, "[entrainement] --- Affûte ton clavier avant d'abattre l'adversaire\n", strlen("[entrainement] --- Affûte ton clavier avant d'abattre l'adversaire\n"));
 	rewrite(STDOUT_FILENO, "[multijoueur] --- Affronte des joueurs en ligne\n", strlen("[multijoueur] --- Affronte des joueurs en ligne\n"));
 	rewrite(STDOUT_FILENO, "[chat] --- Echange avec tes adversaires\n", strlen("[chat] --- Echange avec tes adversaires\n"));
 	rewrite(STDOUT_FILENO, "[quitter]   --- Quitter DigitDash\n", strlen("[quitter]   --- Quitter DigitDash\n"));
@@ -91,7 +91,7 @@ void client()
 		else if(strcmp(message,"quitter") == 0)
 			break;
 		
-		else if(strcmp(message,"entraînement") == 0)
+		else if(strcmp(message,"entrainement") == 0)
 			system ("../training/display/test");
 		else if(strcmp(message,"multijoueur") == 0)
 			break;
@@ -121,16 +121,17 @@ void client()
 		recv(sfd, &buffer, BUFFER_SIZE,0);
 		
 		//Affichage de la première requête serveur
-		char message_tmp[BUFFER_SIZE] = {0};
+		/*char message_tmp[BUFFER_SIZE] = {0};
 		rewrite(1, buffer, strlen(buffer));
 		ssize_t r = read(1, message_tmp, BUFFER_SIZE);
 		if(r == -1)
         	errx(3, "Error reading option");
         
 		rewrite(sfd, &message_tmp, strlen(message_tmp));
-		printf("Requête envoyée : %s\n", message_tmp);
+		printf("Requête envoyée : %s\n", message_tmp);*/
 		
-		
+		char *waiting = "En attente de joueurs...\n\n";
+		rewrite(1, waiting, strlen(waiting));
 		char *welcome = "Envoyez une requête: ";
 		
 		//Boucle pour les différents envois de requêtes
