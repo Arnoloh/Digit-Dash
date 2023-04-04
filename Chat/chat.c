@@ -79,7 +79,7 @@ int u2u()
         return 1;
     }
 
-    printf("Connected to server\n");
+    printf("Connecté au Digi-Chat\n");
 
     // Recevoir le message initial du serveur et y répondre
     char buffer[BUFFER_SIZE];
