@@ -1,6 +1,6 @@
 #Makefile
 CC = gcc -g
-CPPFLAGS =  -pthread
+CPPFLAGS = -fsanitize=address
 CFLAGS = -Wall -Wextra -std=c99
 
 
@@ -8,15 +8,15 @@ SRC = ${wildcard *.c}
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-all: server
+all: test
 
 -include ${DEP}
 
-server: ${OBJ}
-	$(CC) ${CFLAGS} ${CPPFLAGS} $^  -o $@
+test: ${OBJ}
+	$(CC) ${CFLAGS} ${CPPFLAGS} $^ -o $@
 	
 
-.PHONY:all clean
+.PHONY: all clean
 
 clean:
-	${RM} -r  ${OBJ} ${DEP} server
+	${RM} -r  ${OBJ} ${DEP} test

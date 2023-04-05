@@ -1,22 +1,15 @@
-#Makefile
+
 CC = gcc -g
-CPPFLAGS = -fsanitize=address
-CFLAGS = -Wall -Wextra 
+CFLAGS = -Wall -Wextra
+LDLIBS = 
 
+EXE = tools
 
-SRC = ${wildcard *.c}
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
+all: $(EXE)
 
-all: main 
+$(foreach f, $(EXE), $(eval $(f):))
 
--include ${DEP}
-
-main: ${OBJ} 
-	$(CC) ${CFLAGS} ${CPPFLAGS} $^  -o $@
-	
-
-.PHONY:all clean
+.PHONY: clean
 
 clean:
-	${RM} -r  ${OBJ} ${DEP} main
+	${RM} -rf $(EXE) *.dSYM

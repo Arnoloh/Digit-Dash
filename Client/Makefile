@@ -1,19 +1,20 @@
 #Makefile
 
 CC = gcc
-CFLAGS = -Wall -Wextra -g -fsanitize=address
+CFLAGS = `pkg-config --cflags glib-2.0` -Wall -Wextra -g -fsanitize=address
 CPPFLAGS = -g -fsanitize=address
 LDFLAGS = -fsanitize=address
+LDLIBS = `pkg-config --libs glib-2.0`
 
-all: main
+all: customer
 
-main: main.o customer.o
+customer: main.o customer.o
 main.o: main.c customer.h
 customer.o: customer.c customer.h
 
 .PHONY: clean
 
 clean:
-	${RM} main main.o customer.o
+	${RM} customer main.o customer.o
 
 #END
