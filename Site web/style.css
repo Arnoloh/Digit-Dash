@@ -4,12 +4,20 @@
 	box-sizing: border-box;
 	font-family: 'poppins', sans-serif;
 	scroll-behavior: smooth;
+    
 }
 body{
-    background-color: red;
+    background: linear-gradient(to bottom right,#22B573, #29ABE2);
+    background-size:auto ;
+    background-repeat: no-repeat;
+    min-height: 80vh;
+
 }
 .scen{
     margin-top:150px ;
+}
+.container-fluid{
+    margin-top: 3%;
 }
 header{
     position: fixed;
@@ -32,25 +40,25 @@ header{
 margin-bottom:20px;}
 .ba{
     background-color:white;
-    color: red; ;
+    color: #20c997; ;
 }
 .logo{
-    color: red;
+    color: #20c997;
     font-weight: bold;
     font-size: 2em;
     text-decoration: none;
 }
 .logo2{
-    color: red;
+    color: #20c997;
     font-weight: bold;
     font-size: 2em;
     text-decoration: none;
 }
 .logo2 span{
-    color: red;
+    color: #20c997;
 }
 .logo span{
-    color: red;
+    color: #20c997;
 }.ml{width:150px;}
 .navbar{
     display: flex;
@@ -62,7 +70,7 @@ margin-bottom:20px;}
 }
 .jj{
     background: white;
-    color:red;
+    color:#20c997;
     padding: 0 0;
     text-decoration: none;
     padding:5%;
@@ -82,13 +90,13 @@ margin-bottom:20px;}
     }
 
 .m{
-    color: red;
+    color: #20c997;
     text-decoration: none;
     margin-left: 30px;
     font-weight: 700;
 }
 .m2{
-    color: red;
+    color: #20c997;
     text-decoration: none;
     margin-left: 30px;
     font-weight: 700;
@@ -101,7 +109,7 @@ margin-top:30 px;}
     padding: 10px 20px;
     margin-left:20px;
     position:center;
-    background: red;
+    background: #20c997;
     font-weight: 700;
     text-transform:none ;
     text-decoration: none;
@@ -111,7 +119,7 @@ margin-top:30 px;}
 .Jouer:hover{
     background: black;
     transition: ease-out;
-    color: red;
+    color: #20c997;
     
 }
 
@@ -149,14 +157,14 @@ header.sticky{
 
     header .navbar li a {
         text-decoration: none;
-        color: red;
+        color: #20c997;
         font-size: 1.6em;
         font-weight: 300;
         
     }
 .jj{
         background: white;
-        color:red;
+        color:#20c997;
         padding: 0 0;
     }
 
@@ -294,7 +302,7 @@ header.sticky{
 .titr{
     font-weight: bold;
     font-family: "OCR A Std", monospace;
-    color:red;
+    color:#20c997;
    
 }
 
@@ -347,7 +355,11 @@ header.sticky{
     text-decoration: none;
     font-weight: 700;
 }
-red {
+.ju:hover{
+    color: black;
+}
+.red {
+    margin-top: 2%;
     text-align: center;
     align-items: center;
     color: #ffffff;
@@ -373,6 +385,7 @@ red {
 
 .haut{
 	width:100%;
+    margin-bottom: 5%;
 }
 #button{
 	z-index: 1;
@@ -401,7 +414,7 @@ red {
 
 }
 .pop{
-    background-color: red;
+    background-color: #20c997;
     font-family: "Courier", Times, serif;
 }
 /*colorion*/
@@ -415,14 +428,14 @@ red {
    text-align: center;
    transition: 0.5s;
    background-size: 70% auto;
-   color: red;
+   color: #20c997;
    border-radius: 10px;
    display: block;
 	text-decoration: none;
 }
 .btn:hover{
    background-position: right center ; 
-   color: red;
+   color: #20c997;
    
 }
 

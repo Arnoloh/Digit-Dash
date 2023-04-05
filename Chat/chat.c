@@ -1,75 +1,125 @@
-#define _GNU_SOURCE
-#include "chat.h"
-#define BUFFER_SIZE 128
-struct message init_message(char *name, char *message, int id)
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+
+#define PORT 13080
+#define IP "82.65.173.135"
+#define BUFFER_SIZE 256
+char name[20];
+void *read_from_server(void *arg)
 {
-    struct message *m = malloc(sizeof(struct message));
-    m->id = id;
-    m->name = strdup(name);
-    m->message = strdup(message);
-    return *m;
-}
-void free_message(struct message *msg)
-{
-    free(msg->name);
-    free(msg->message);
-    free(msg);
-}
-void u2u(void)
-{
+    int sockfd = *(int *)arg;
     char buffer[BUFFER_SIZE];
-    int sock;
-    struct sockaddr_in server;
-    char message[100], server_reply[2000], name[20];
-    ;
-    // Créez le socket
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1)
-    {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
 
-    server.sin_addr.s_addr = inet_addr("82.65.173.135");
-    server.sin_family = AF_INET;
-    server.sin_port = htons(13080);
-
-    // Connectez le socket au serveur
-    if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0)
-    {
-        perror("connect failed. Error");
-        return;
-    }
-    printf("Enter your name: ");
-    bzero(name, 20);
-    fgets(name, 20, stdin);
-    
-    puts("Connected\n");
-    // Boucle pour envoyer et recevoir des messages
     while (1)
     {
-        printf("Enter message : ");
-        bzero(message, 100);
-        fgets(message, 100, stdin);
+        ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+        if (received <= 0)
+        {
+            perror("Error reading from server");
+            break;
+        }
+        buffer[received] = '\0';
 
-        bzero(buffer, BUFFER_SIZE);
-        strcat(buffer, name);
-        buffer[strlen(name) - 1] = '\0';
-        strcat(buffer, ": ");
-        strcat(buffer, message);
-        if (send(sock, buffer, BUFFER_SIZE, 0) < 0)
-        {
-            puts("Send failed");
-            return;
-        }
-        puts("Data Send\n");
-        int r=recv(sock, server_reply, 2000, 0);
-        // Receive a reply from the server
-        if (r < 0)
-        {
-            puts("recv failed");
-        }
-       
-        write(0,server_reply, r);
+        printf("%s", buffer); // Affichez le message directement sans modification
     }
+
+    return NULL;
+}
+
+void *write_to_server(void *arg)
+{
+    int sockfd = *(int *)arg;
+    char buffer[BUFFER_SIZE];
+    char formatted_buffer[BUFFER_SIZE]; // Pour inclure le nom et le message
+
+    while (1)
+    {
+        printf("%s:", name);
+        fflush(stdout);
+        fgets(buffer, BUFFER_SIZE, stdin);
+        
+        // Ajoutez le nom et le message à formatted_buffer
+        snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
+
+        ssize_t sent = send(sockfd, formatted_buffer, strlen(formatted_buffer), 0);
+        if (sent < 0)
+        {
+            perror("Error writing to server");
+            break;
+        }
+    }
+
+    return NULL;
+}
+
+
+int u2u()
+{
+    int sockfd;
+    struct sockaddr_in server_addr;
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+    {
+        perror("Error opening socket");
+        return 1;
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr(IP);
+    server_addr.sin_port = htons(PORT);
+
+    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    {
+        perror("Error connecting to server");
+        return 1;
+    }
+
+    printf("Connecté au Digi-Chat\n");
+
+    // Recevoir le message initial du serveur et y répondre
+    char buffer[BUFFER_SIZE];
+    ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+    if (received > 0)
+    {
+        buffer[received] = '\0';
+        printf("%s", buffer);
+
+        fgets(name, 20, stdin);
+        size_t i =0;
+        while(name[i] != '\0')
+        {
+            i++;
+        }
+        name[i-1] = '\0';
+        ssize_t sent = send(sockfd, name, i, 0);
+        if (sent < 0)
+        {
+            perror("Error writing to server");
+        }
+    }
+    
+    pthread_t read_thread, write_thread;
+
+    if (pthread_create(&read_thread, NULL, read_from_server, (void *)&sockfd) != 0)
+    {
+        perror("Error creating read thread");
+        return 1;
+    }
+
+    if (pthread_create(&write_thread, NULL, write_to_server, (void *)&sockfd) != 0)
+    {
+        perror("Error creating write thread");
+        return 1;
+    }
+
+    pthread_join(read_thread, NULL);
+    pthread_join(write_thread, NULL);
+
+    close(sockfd);
+    return 0;
 }

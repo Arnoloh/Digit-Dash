@@ -10,6 +10,9 @@
 #include <string.h>
 #include <err.h>
 #include <unistd.h>
+#include <glib.h>
+
+#define BUFFER_SIZE 512
 
 
 void rewrite(int fd, const void *buf, size_t count)
@@ -30,74 +33,81 @@ void rewrite(int fd, const void *buf, size_t count)
     return;
 }
 
-unsigned long fibonacci()
+void echo(int fd_in, int fd_out)
 {
-  unsigned long n, nbr1 = 0, nbr2 = 1, suivant, i;
- 
-  printf("Entrez le nombre de termes\n");
-  scanf("%ld", &n);
- 
-  printf("Les %ld premiers termes de la série de Fibonacci sont:\n", n);
-  
-  if(!n)
-  	errx(3,"EXIT FAILURE: Invalid parameter");
-  
-  if(n == 0 || n == 1)
-  	return n;
-  else
-  {
-	  for (i = 0; i < n; i++)
-	  {
-			if (i <= 1)
-			  suivant = i;
-			else
-			{
-			  suivant = nbr1 + nbr2;
-			  nbr1 = nbr2;
-			  nbr2 = suivant;
-			}
-			printf("%ld\n", suivant);
-	  }
-	 
-	  return suivant;
-  }
+    char buf[BUFFER_SIZE] = {0};
+    while(1)
+    {
+        ssize_t r = read(fd_in, buf, BUFFER_SIZE);
+        
+        if(!r)
+            break;
+        if(r == -1)
+            errx(3, "Error reading command");
+
+        rewrite(fd_out, buf, r);
+    }
+
+    return;
 }
 
 void query(char message[])
 {
-	char *welcome = "Enter a request : ";
-	rewrite(STDOUT_FILENO, welcome, strlen(welcome));
-	
 	scanf("%s", message);
+}
+
+void welcome()
+{
+	char msg[] = "Bienvenue sur DigitDash.\n\n";
+	rewrite(STDOUT_FILENO, msg, strlen(msg));
 }
 
 void help()
 {
-	printf("Here are the commands you are allowed to use\n");
-	printf("[server] --- Will allow you to connect to the server\n");
-	printf("[exit]   --- Close the client\n");
-	printf("[help]   --- How use availables command\n\n");
+	rewrite(STDOUT_FILENO, "Menu Principal\n", strlen("Menu Principal\n"));
+	rewrite(STDOUT_FILENO, "[entrainement] --- Affûte ton clavier avant d'abattre l'adversaire\n", strlen("[entrainement] --- Affûte ton clavier avant d'abattre l'adversaire\n"));
+	rewrite(STDOUT_FILENO, "[multijoueur] --- Affronte des joueurs en ligne\n", strlen("[multijoueur] --- Affronte des joueurs en ligne\n"));
+	rewrite(STDOUT_FILENO, "[chat] --- Echange avec tes adversaires\n", strlen("[chat] --- Echange avec tes adversaires\n"));
+	rewrite(STDOUT_FILENO, "[quitter]   --- Quitter DigitDash\n", strlen("[quitter]   --- Quitter DigitDash\n"));
+	rewrite(STDOUT_FILENO, "[aide]   --- Permet de connaître les options disponibles\n\n", strlen("[aide]   --- Permet de connaître les options disponibles\n\n"));
 }
 
 void client()
 {
-	char message[256] = {0};
+	char message[BUFFER_SIZE] = {0};
+	welcome();
+	help();
 	
-	while(strcmp(message,"server") && strcmp(message,"exit"))
-	{
+	while(1)
+	{	
+		
+		char *welcome = "Choisissez une option: ";
+		rewrite(STDOUT_FILENO, welcome, strlen(welcome));
 		query(message);
-		if(strcmp(message,"help") && strcmp(message,"server") && strcmp(message,"exit"))
+		
+		if(strcmp(message,"chat") == 0)
+			system ("../Chat/main");
+		
+		else if(strcmp(message,"quitter") == 0)
+			break;
+		
+		else if(strcmp(message,"entrainement") == 0)
+			system ("../training/display/test");
+		else if(strcmp(message,"multijoueur") == 0)
+			break;
+			
+		else
 		{
-			 printf("Unknown request. Enter [help] to know what command is available.\n");
+			rewrite(STDOUT_FILENO, "Option invalide. Entrez [aide] pour connaître les options disponibles.\n", strlen("Option invalide. Entrez [aide] pour connaître les options disponibles.\n"));
 		}
 		
-		if(!strcmp(message,"help"))
+		if(!strcmp(message,"aide"))
 		{
 			help();
 		}
     }
     
-    if(strcmp(message,"exit"))
+    if(strcmp(message,"quitter"))
 	{
 		int sfd = socket(AF_INET, SOCK_STREAM, 0);
 		struct sockaddr_in addrClient;
@@ -105,24 +115,51 @@ void client()
 		addrClient.sin_family = AF_INET;
 		addrClient.sin_port = htons(13080);
 		connect(sfd, (const struct sockaddr *)&addrClient, sizeof(addrClient));
-		printf("Client connected : %d\n", sfd);
 		
-		char message2[256] = {0};
+		//Première connexion au serveur
+		char buffer[BUFFER_SIZE]  = {0};
+		recv(sfd, &buffer, BUFFER_SIZE,0);
 		
-		while(strcmp(message2,"exit"))
-		{
-			query(message2);
+		//Affichage de la première requête serveur
+		/*char message_tmp[BUFFER_SIZE] = {0};
+		rewrite(1, buffer, strlen(buffer));
+		ssize_t r = read(1, message_tmp, BUFFER_SIZE);
+		if(r == -1)
+        	errx(3, "Error reading option");
+        
+		rewrite(sfd, &message_tmp, strlen(message_tmp));
+		printf("Requête envoyée : %s\n", message_tmp);*/
+		
+		char *waiting = "En attente de joueurs...\n\n";
+		rewrite(1, waiting, strlen(waiting));
+		char *welcome = "Envoyez une requête: ";
+		
+		//Boucle pour les différents envois de requêtes
+		while(1)
+		{	
+			char message2[BUFFER_SIZE] = {0};
 			
-			send(sfd, &message2, sizeof(message2), 0);
-		   	printf("Message send : %s\n", message2);
+			rewrite(1, welcome, strlen(welcome));
+			ssize_t r = read(1, message2, BUFFER_SIZE);
+			if(r == -1)
+            	errx(3, "Error reading option");
+            
+            if(strcmp(message2, "quitter\n") == 0)
+				break;
+            
+            rewrite(sfd, message2, r);
+		   	printf("\nRéponse envoyée : %s\n\n", message2);
 		   	
 		   	char answer[256] = {0};
 		   	recv(sfd, &answer, 256,0);
-		   	printf("Answer : %s",answer);
+		   	printf("%s\n",answer);
 		}
-
+		
+		
+		//Déconnexion du joueur
 		close(sfd);
-		printf("Client disconnected : %d\n", sfd);
+		rewrite(STDOUT_FILENO, "\nDigitDash fermé.\n", strlen("\nDigitDash fermé.\n"));
+		printf("Joueur déconnecté : %d\n", sfd);
 	}
-	printf("Application closed.\n");
+	rewrite(STDOUT_FILENO, "DigitDash fermé.\n", strlen("DigitDash fermé.\n"));
 }
