@@ -1,5 +1,6 @@
 #include "tools.h"
 
+
 typedef struct{
     Generic info;
     char test;
@@ -93,3 +94,4 @@ Generic *deserialize(const char *str)
 
 //     return 0;
 // }
+
