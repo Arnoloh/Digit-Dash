@@ -41,7 +41,7 @@ void *write_to_server(void *arg)
         printf("%s:", name);
         fflush(stdout);
         fgets(buffer, BUFFER_SIZE, stdin);
-        
+    
         // Ajoutez le nom et le message à formatted_buffer
         snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
 

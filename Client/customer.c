@@ -94,7 +94,10 @@ void client()
 		else if(strcmp(message,"entrainement") == 0)
 			system ("../training/display/test");
 		else if(strcmp(message,"multijoueur") == 0)
-			break;
+		{
+			printf("Non disponible pour le moment\n");
+
+		}
 			
 		else
 		{
