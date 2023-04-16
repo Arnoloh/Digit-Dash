@@ -98,13 +98,13 @@ void client_disconnected(Game *ALL_GAME, int pid)
 
         if (game->player_one == pid)
         {
-            game->player_two = 0;
+            game->player_one = 0;
             // display_games(ALL_GAME, 5);
             return;
         }
         if (game->player_two == pid)
         {
-            game->player_one = 0;
+            game->player_two = 0;
             // display_games(ALL_GAME, 5);
             return;
         }
@@ -188,7 +188,7 @@ void *handle_connection(void *args)
         {
             fprintf(fd, "Client disconnected: %i\n", cfd);
             fflush(fd);
-            client_disconnected(targs->ALL_GAME, find_fd(targs->ALL_GAME,cfd));
+            client_disconnected(targs->ALL_GAME,cfd);
             break;
         }
     }
