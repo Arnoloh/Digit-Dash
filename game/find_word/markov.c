@@ -230,34 +230,4 @@ int main()
     char *a=function();
     char **b=str_to_list(a);
     return b;
-    //char *re3=new_word(re2,"c.txt");
-    //char *re4=new_word(re3,"c.txt");
-    /*for (int i=0; i<15; i++)
-    {
-        result=new_word(result,"c.txt");
-    }*/
-    /*printf("Please choose the language you want: C - Python\n");
-    char input[50];
-
-    //fgets(input, 50, stdin);
-
-    scanf( "%s", input );
-    toLowerCase(input);
-    if(strcmp(input, "c") == 0) 
-    {
-        int i=0;
-        while (i<15)
-        {
-            if (i==0)
-            {
-                char *a=new_word(argv[1],"c.txt");
-                char *b=new_word(a,"c.txt");
-            }
-            else
-            {
-                char *b=new_word(b,"c.txt");
-            }
-            i++;
-        }
-    }*/
 }
