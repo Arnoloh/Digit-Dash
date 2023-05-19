@@ -1,8 +1,7 @@
-#Makefile
 CC = gcc -g
-CPPFLAGS = -fsanitize=address
+CPPFLAGS = -fsanitize=address 
 CFLAGS+= -Wall -Werror -g -fsanitize=address
-
+LDLIBS = -lncurses
 
 SRC = main.c chat.c ../tools/tools.c
 OBJ = ${SRC:.c=.o}
@@ -13,8 +12,7 @@ all: main
 -include ${DEP}
 
 main: ${OBJ}
-	$(CC) ${CFLAGS} ${CPPFLAGS} $^  -o $@
-	
+	$(CC) ${CFLAGS} ${CPPFLAGS} $^  -o $@ $(LDLIBS)
 
 .PHONY:all clean
 

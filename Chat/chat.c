@@ -9,6 +9,7 @@
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
 char name[20];
+
 void *read_from_server(void *arg)
 {
     int sockfd = *(int *)arg;
@@ -23,8 +24,8 @@ void *read_from_server(void *arg)
             break;
         }
         buffer[received] = '\0';
-
-        printf("%s", buffer); // Affichez le message directement sans modification
+        printf("\r%s%s: ", buffer, name); // Effacez l'entrée en cours et imprimez le message, puis réimprimez l'entrée
+        fflush(stdout);
     }
 
     return NULL;
@@ -34,15 +35,14 @@ void *write_to_server(void *arg)
 {
     int sockfd = *(int *)arg;
     char buffer[BUFFER_SIZE];
-    char formatted_buffer[BUFFER_SIZE]; // Pour inclure le nom et le message
+    char formatted_buffer[BUFFER_SIZE];
 
     while (1)
     {
-        printf("%s:", name);
+        printf("%s: ", name);
         fflush(stdout);
         fgets(buffer, BUFFER_SIZE, stdin);
-    
-        // Ajoutez le nom et le message à formatted_buffer
+
         snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
 
         ssize_t sent = send(sockfd, formatted_buffer, strlen(formatted_buffer), 0);
@@ -55,7 +55,6 @@ void *write_to_server(void *arg)
 
     return NULL;
 }
-
 
 int u2u()
 {
@@ -81,7 +80,6 @@ int u2u()
 
     printf("Connecté au Digi-Chat\n");
 
-    // Recevoir le message initial du serveur et y répondre
     char buffer[BUFFER_SIZE];
     ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (received > 0)
@@ -102,7 +100,7 @@ int u2u()
             perror("Error writing to server");
         }
     }
-    
+
     pthread_t read_thread, write_thread;
 
     if (pthread_create(&read_thread, NULL, read_from_server, (void *)&sockfd) != 0)
