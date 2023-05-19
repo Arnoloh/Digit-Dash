@@ -154,7 +154,7 @@ void toLowerCase(char *str)
 char *choosestartword(struct list *list)
 {
     srand(time(NULL));
-    int r = rand() % (list_len(list)+1);
+    int r = rand() % (list__len(list)+1);
     struct list *temp=list;
     for (int i=0; i<r; i++)
     {
@@ -228,8 +228,17 @@ char **str_to_list(char *string)
 int main()
 {
     char *a=function();
-    char **b=str_to_list(a);
-    return b;
+    char **strings=str_to_list(a);
+    int i = 0;
+    while (strings[i] != NULL) {  // Parcourir chaque chaîne jusqu'à la fin (NULL)
+        int j = 0;
+        while (strings[i][j] != '\0') {  // Parcourir chaque caractère jusqu'à la fin de la chaîne ('\0')
+            printf("%c", strings[i][j]);
+            j++;
+        }
+        printf("    \n");
+        i++;
+    }
     //char *re3=new_word(re2,"c.txt");
     //char *re4=new_word(re3,"c.txt");
     /*for (int i=0; i<15; i++)

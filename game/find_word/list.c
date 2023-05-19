@@ -35,6 +35,18 @@ void add_node(struct inlist *head, int value)
 size_t list_len(struct inlist *list)
 {
 	size_t i=0;
+	struct inlist *a=list;
+	while (a->next != NULL)
+	{
+		a=a->next;
+		i++;
+	}
+	return i;
+}
+
+size_t list__len(struct list *list)
+{
+    size_t i=0;
 	struct list *a=list;
 	while (a->next != NULL)
 	{
@@ -57,9 +69,6 @@ int list_is_sorted(struct list *list)
 
 void print_list(struct list *list)
 {
-    printf("list_is_empty() = %s\n", list_is_empty(list) ? "yes" :  "no");
-    printf("list_is_sorted() = %s\n", list_is_sorted(list) ? "yes" :  "no");
-
     int line = 1;
 
     printf("[");
@@ -88,9 +97,6 @@ void print_list(struct list *list)
 
 void print_inlist(struct inlist *list)
 {
-    printf("list_is_empty() = %s\n", list_is_empty(list) ? "yes" :  "no");
-    printf("list_is_sorted() = %s\n", list_is_sorted(list) ? "yes" :  "no");
-
     int line = 1;
 
     printf("[");
