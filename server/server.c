@@ -160,7 +160,7 @@ void *worker_message(void *args)
 
         if (second_cfd == 0)
         {
-            write(cfd, "No one is connected.\n", strlen("No one is connected.\n"));
+            write(cfd, "Server: No one is connected.\n", strlen("Server: No one is connected.\n"));
             continue;
         }
         if (strcmp(client_message, "ready\n") == 0)
@@ -195,6 +195,7 @@ void *handle_connection(void *args)
     write(cfd, server_ask, strlen(server_ask));
     char name[20] = {0};
     read(cfd, name, 20);
+
     for (int i = 0; i < 20; i++)
         if (name[i] == '\n')
         {
