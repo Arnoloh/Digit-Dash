@@ -5,8 +5,6 @@
 
 int main()
 {   
-    client();
-    //fibonacci();
-    //query();
+    MainMenu();
     return 0;
 }

@@ -8,13 +8,13 @@ LDLIBS = `pkg-config --libs glib-2.0`
 
 all: customer
 
-customer: main.o customer.o
-main.o: main.c customer.h
-customer.o: customer.c customer.h
+customer: main.o customer.o ../Chat/chat.o
+main.o: main.c customer.h ../Chat/chat.h
+customer.o: customer.c customer.h ../Chat/chat.c ../Chat/chat.o
 
 .PHONY: clean
 
 clean:
-	${RM} customer main.o customer.o
+	${RM} customer main.o customer.o ../Chat/chat.o
 
 #END

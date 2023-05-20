@@ -5,6 +5,9 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
+//Nouvelle include
+#include "../Client/customer.h"
+
 #define PORT 13080
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
@@ -23,7 +26,14 @@ void *read_from_server(void *arg)
             perror("Error reading from server");
             break;
         }
+        
         buffer[received] = '\0';
+        
+        //Détection du type de requête
+		int req = detectRequest(buffer);
+		stockRequest(buffer, req);
+		
+        
         printf("\r%s%s: ", buffer, name); // Effacez l'entrée en cours et imprimez le message, puis réimprimez l'entrée
         fflush(stdout);
     }
@@ -84,7 +94,11 @@ int u2u()
     ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (received > 0)
     {
-        buffer[received] = '\0';
+    	buffer[received] = '\0';
+    	//Détection du type de requête
+		int req = detectRequest(buffer);
+		stockRequest(buffer, req);
+		
         printf("%s", buffer);
 
         fgets(name, 20, stdin);

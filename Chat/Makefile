@@ -3,7 +3,7 @@ CPPFLAGS = -fsanitize=address
 CFLAGS+= -Wall -Werror -g -fsanitize=address
 LDLIBS = -lncurses
 
-SRC = main.c chat.c ../tools/tools.c
+SRC = main.c chat.c ../tools/tools.c ../Client/customer.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
