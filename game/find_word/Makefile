@@ -1,6 +1,6 @@
 # Makefile
 
-CC = gcc
+CC = gcc -g
 CPPFLAGS = -MMD
 CFLAGS = -Wall -Wextra
 LDFLAGS =

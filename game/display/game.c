@@ -20,22 +20,18 @@ Game* init_game(char* name_1, char* name_2)
 
 int main(void)
 {
-    size_t n = 3;
+    size_t n = 5;
     char** level = malloc(sizeof(char*) * n);
-
-    for (size_t i = 0 ; i < n ; i++)    
-    {
-        level[i] = malloc(sizeof(char) * 11);
-
-        for (size_t j = 0 ; j < 10 ; j++)
-            level[i][j] = 'a';
-        
-        level[i][10] = '\0';
-    }
-
     Game* game = init_game("Ethan", "Jessy");
-
-    run(game->player_1, level, n);
+    int dict_size = 0;
+    seed = time(NULL);
+    DictEntry *dict = generate_dict("../find_word/database/c.txt", &dict_size);
+    if (!dict) {
+        return 1; // Failed to generate the dictionary
+    }
+    srand(seed);
+    char **lines = generate_lines(dict, dict_size, 5);
+    run(game->player_1, lines, n);
 
     free(game->player_1);
     free(game->player_2);

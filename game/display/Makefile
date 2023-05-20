@@ -1,12 +1,12 @@
 #Makefile
 CC = gcc -g
-CPPFLAGS = -fsanitize=address
+CPPFLAGS =
 CFLAGS = -Wall -Wextra -std=c99
 
 
-SRC = ${wildcard *.c}
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
+SRC = ${wildcard *.c} ../find_word/markov.c
+OBJ = ${SRC:.c=.o} 
+DEP = ${SRC:.c=.d} 
 
 all: test
 

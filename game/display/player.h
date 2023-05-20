@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <string.h>
+#include "../find_word/markov.h"
 
 #define BACKSPACE_KEY 8
 #define DELETE_KEY 127
