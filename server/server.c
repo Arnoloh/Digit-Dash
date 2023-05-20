@@ -278,8 +278,8 @@ void *lunch_game(void *args)
                 write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
                 sleep(1);
 
-                write(game->player_one, "Server: Game start in 1"\n, strlen("Server: Game start in 1"\n));
-                write(game->player_two, "Server: Game start in 1"\n, strlen("Server: Game start in 1"\n));
+                write(game->player_one, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
+                write(game->player_two, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
                 sleep(1);
 
                 write(game->player_one, serveur_message, strlen(serveur_message));
