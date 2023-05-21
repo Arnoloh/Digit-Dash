@@ -1,7 +1,7 @@
 #include "markov.h"
 
 
-
+// delete begin spaces
 char *trim_leading_spaces(char *str)
 {
     while (*str == ' ')
@@ -10,7 +10,7 @@ char *trim_leading_spaces(char *str)
     }
     return str;
 }
-
+// delete end spaces
 void trim_trailing_spaces(char *str)
 {
     char *end = str + strlen(str);
@@ -74,6 +74,7 @@ int rand_num(int max)
     srand(new);
     return new;
 }
+// always same
 int rand_without_seed(int max)
 {
     return rand() % max;
@@ -127,19 +128,21 @@ char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
     return lines;
 }
 
-DictEntry *generate_dict(const char *file_path, int *dict_size) {
+DictEntry *generate_dict(const char *file_path, int *dict_size) 
+{
     FILE *file = fopen(file_path, "r");
     if (file == NULL) {
         printf("Could not open file.\n");
         return NULL;
     }
 
-    DictEntry *dict = malloc(1000 * sizeof(DictEntry));
+    DictEntry *dict = malloc(10000 * sizeof(DictEntry));
 
     char *line = NULL, *next_line = NULL;
     size_t len = 0;
 
-    if (getline(&line, &len, file) == -1) {
+    if (getline(&line, &len, file) == -1) 
+    {
         printf("File is empty.\n");
         return NULL;
     }
@@ -149,7 +152,8 @@ DictEntry *generate_dict(const char *file_path, int *dict_size) {
     line = trim_leading_spaces(line);
     trim_trailing_spaces(line);
 
-    while (getline(&next_line, &len, file) != -1) {
+    while (getline(&next_line, &len, file) != -1) 
+    {
         // remove trailing newline character
         next_line[strcspn(next_line, "\n")] = 0;
 
@@ -167,22 +171,22 @@ DictEntry *generate_dict(const char *file_path, int *dict_size) {
     return dict;
 }
 
-// int main() {
-//     int dict_size = 0;
-//     DictEntry *dict = generate_dict("database/c.txt", &dict_size);
+int main() 
+{
+    int dict_size = 0;
+    DictEntry *dict = generate_dict("database.txt", &dict_size);
 
-//     if (!dict) {
-//         return 1; // Failed to generate the dictionary
-//     }
+    if (!dict) 
+    {
+         return 1; // Failed to generate the dictionary
+    }
 
-// //     // print_dict(dict, dict_size);
+    // // // print_dict(dict, dict_size);
 
-// //     // Seed the random number generator
-//     srand(time(NULL));
+    // // // Seed the random number generator
+    srand(time(NULL));
 
-//     // Generate 5 random lines
-//     char **lines = generate_lines(dict, dict_size, 5);
-
-
-// //     return 0;
-// }
+    //// Generate 5 random lines
+    char **lines = generate_lines(dict, dict_size, 5);
+    return 0;
+}

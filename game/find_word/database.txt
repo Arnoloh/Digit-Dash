@@ -1,0 +1,282 @@
+int estPair(int n) {
+    if (n%2 == 0) {
+        return 1;
+    } else {
+        return 0; }
+int sommeTableau(int tableau[], int taille) {
+    int somme = 0;
+    for( int i = 0; i < taille; i++) {
+        somme += tableau[i]; }
+    return somme;} 
+void inverserChaine(char chaine[]) {
+    int longueur = strlen(chaine);
+    for (int i = 0; i < longueur/2; i++) {
+        char temp = chaine[i];
+        chaine[i] = chaine[longueur-i-1];
+        chaine[longueur-i-1] = temp; }
+int binary_to_decimal(char *binary) {
+    int decimal = 0;
+    int len = strlen(binary);
+    for (int i = 0; i < len; i++) {
+        decimal = decimal*2 + (binary[i]-'0'); }
+    return decimal; }
+void decimal_to_binary(int decimal, char *binary) {
+    if (decimal == 0) {
+        strcpy(binary,"0");
+        return; }
+    int i = 0;
+    while (decimal > 0) {
+        binary[i++] = decimal%2 + '0';
+        decimal /= 2; }
+    binary[i] = '\0';
+    strrev(binary); }
+int is_prime(int n) {
+    if (n<2) {
+        return 0; }
+    int sqrt_n = sqrt(n);
+    for (int i = 2; i <= sqrt_n; i++) {
+        if (n%i == 0) {
+            return 0; }
+    return 1; }
+void count_words(char *text, int *counts, int len) {
+    char *word;
+    while ((word = strsep(&text, "a")) != NULL) {
+        if (strlen(word) > 0)  {
+            int i;
+            for (i = 0; i<len; i++) {
+                if (strcmp(word, counts[i].word) == 0) {
+                    counts[i].count++;
+                    break;
+                }
+                if (counts[i].word[0] == '\0') {
+                    strcpy(counts[i].word, word);
+                    counts[i].count = 1;
+                    break; }
+            if (i == len) {
+                printf("Nombre maximal de mots atteint.\n");
+                return;
+float moyenne(int tableau[], int taille) {
+    int somme = 0;
+    for (int i=0; i < taille; i++) {
+        somme += tableau[i]; }
+    return (float) somme / taille }
+void trier(int tableau[], int taille) {
+    int temp;
+    for (int i = 0; i < taille-1; i++) {
+        for (int j = i + 1; j < taille; j++) {
+            if (tableau[i] > tableau[j]) {
+                temp = tableau[i];
+                tableau[i] = tableau[j];
+                tableau[j] = temp;
+int chaine_vers_entier(char chaine[]) {
+    int resultat = 0;
+    int i = 0;
+    while (chaine[i] != '\0') {
+        resultat = resultat * 10 + (chaine[i] - '0');
+        i++; }
+    return resultat; }
+void afficher_matrice(int matrice[][3], int lignes, int colonnes) {
+    for (int i = 0; i < lignes; i++) {
+        for (int j = 0; j < colonnes; j++) {
+            printf("%d ", matrice[i][j]); }
+        printf("\n"); } }
+double racine_carree(double nombre) {
+    double resultat = nombre / 2;
+    double precision = 0.00001;
+    while (fabs(resultat * resultat - nombre) > precision) {
+        resultat = (resultat + nombre / resultat) / 2.0; }
+    return resultat; }
+int factorial(int n) {
+    if (n == 0 || n == 1) {
+        return 1;
+    } else {
+        return n * factorial(n - 1); } }
+void reverseString(char* str) {
+    int length = 0;
+    while (str[length] != '\0') {
+        length++; }
+    int start = 0;
+    int end = length - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--; } }
+int isEven(int n) {
+    return (n % 2 == 0); }
+int max(int a, int b) {
+    return (a > b) ? a : b; }
+void printArray(int* arr, int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]); }
+    printf("\n"); }
+int sumArray(int* arr, int size) {
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += arr[i]; }
+    return sum; }
+void sortArray(int* arr, int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+double power(double base, int exponent) {
+    double result = 1.0;
+    if (exponent > 0) {
+        for (int i = 0; i < exponent; i++) {
+            result *= base;
+        }
+    } else if (exponent < 0) {
+        for (int i = 0; i < -exponent; i++) {
+            result /= base; } }
+    return result; }
+int isLeapYear(int year) {
+    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0); }
+int isPalindrome(char* str) {
+    int length = 0;
+    while (str[length] != '\0') {
+        length++; }
+    int start = 0;
+    int end = length - 1;
+    while (start < end) {
+        if (str[start] != str[end]) {
+            return 0; }
+        start++;
+        end--; }
+    return 1; }
+int min(int a, int b) {
+    return (a < b) ? a : b; }
+int sum(int n) {
+    int result = 0;
+    for (int i = 1; i <= n; i++) {
+        result += i; }
+    return result; }
+double average(int* arr, int size) {
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += arr[i]; }
+    return (double)sum / size; }
+char* concatenateStrings(const char* str1, const char* str2) {
+    int length1 = 0;
+    while (str1[length1] != '\0') {
+        length1++; }
+    int length2 = 0;
+    while (str2[length2] != '\0') {
+        length2++; }
+    char* result = (char*)malloc((length1 + length2 + 1) * sizeof(char));
+    int i, j;
+    for (i = 0; i < length1; i++) {
+        result[i] = str1[i]; }
+    for (j = 0; j < length2; j++) {
+        result[i + j] = str2[j]; }
+    result[i + j] = '\0';
+    return result; }
+int containsSubstring(const char* str, const char* substr) {
+    int i, j;
+    for (i = 0; str[i] != '\0'; i++) {
+        j = 0;
+        while (str[i + j] == substr[j]) {
+            j++;
+            if (substr[j] == '\0') {
+                return 1; }
+    return 0; }
+int reverseNumber(int num) {
+    int reversedNum = 0;
+    while (num != 0) {
+        reversedNum = reversedNum * 10 + num % 10;
+        num /= 10; }
+    return reversedNum; }
+int square(int num) {
+    return num * num; }
+int isPrime(int num) {
+    if (num <= 1) {
+        return 0; }
+    for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+            return 0; } }
+    return 1; }
+int stringToInteger(const char* str) {
+    int result = 0;
+    int i = 0;
+    int sign = 1;
+    if (str[0] == '-') {
+        sign = -1;
+        i = 1;
+int* createArray(int size) {
+    int* array = (int*)malloc(size * sizeof(int));
+    return array; }
+int* resizeArray(int* array, int newSize) {
+    int* newArray = (int*)realloc(array, newSize * sizeof(int));
+    return newArray; }
+void freeArray(int* array) {
+    free(array); }
+char* createString(int size) {
+    char* str = (char*)malloc(size * sizeof(char));
+    return str; }
+char* resizeString(char* str, int newSize) {
+    char* newStr = (char*)realloc(str, newSize * sizeof(char));
+    return newStr; }
+void freeString(char* str) {
+    free(str); }
+struct ListNode* createNode(int value) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+void addNode(struct ListNode** head, int value) {
+    struct ListNode* newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct ListNode* current = *head;
+        while (current->next != NULL) {
+            current = current->next; }
+        current->next = newNode; }
+void freeList(struct ListNode* head) {
+    struct ListNode* current = head;
+    while (current != NULL) {
+        struct ListNode* temp = current;
+        current = current->next;
+        free(temp); }
+int** createMatrix(int rows, int columns) {
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int*)malloc(columns * sizeof(int)); }
+    return matrix; }
+void freeMatrix(int** matrix, int rows) {
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]); }
+    free(matrix); }
+char* copyString(const char* str) {
+    int length = strlen(str);
+    char* copy = (char*)malloc((length + 1) * sizeof(char));
+    strcpy(copy, str);
+    return copy;
+}
+char* concatenateStrings(const char* str1, const char* str2) {
+    int length1 = strlen(str1);
+    int length2 = strlen(str2);
+    char* result = (char*)malloc((length1 + length2 + 1) * sizeof(char));
+    strcpy(result, str1);
+    strcat(result, str2);
+    return result;
+}
+char* reverseString(const char* str) {
+    int length = strlen(str);
+    char* reversed = (char*)malloc((length + 1) * sizeof(char));
+    for (int i = 0; i < length; i++) {
+        reversed[i] = str[length - i - 1]; }
+    reversed[length] = '\0';
+    return reversed;
+}
+void sortArray(int* array, int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (array[j] > array[j + 1]) {
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;  }
