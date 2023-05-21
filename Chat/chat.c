@@ -13,6 +13,9 @@
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
 char name[20];
+
+//Nouvelles variables
+char buffer_seed[BUFFER_SIZE];
 int req = 10;
 
 void *read_from_server(void *arg)
@@ -31,15 +34,25 @@ void *read_from_server(void *arg)
 
         buffer[received] = '\0';
 
+		/*
+        #####	Nouvelle instruction #####
+        */
+        
         // Détection du type de requête
-         req = detectRequest(buffer);
-         stockRequest(buffer, req);
+        req = detectRequest(buffer);
+        stockRequest(buffer, req);
 
         printf("\r%s%s: ", buffer, name); // Effacez l'entrée en cours et imprimez le message, puis réimprimez l'entrée
         fflush(stdout);
         
+        /*
+        #####	Nouvelle instruction #####
+        */
         if(req == 0)
+        {
+        	strcpy(buffer_seed, buffer);
         	break;
+        }
     }
 
     return NULL;
@@ -51,6 +64,7 @@ void *write_to_server(void *arg)
     char buffer[BUFFER_SIZE];
     char formatted_buffer[BUFFER_SIZE];
 
+	end_game:
     while (1)
     {
         printf("%s: ", name);
@@ -70,10 +84,14 @@ void *write_to_server(void *arg)
         	break;
     }
     
+    /*
+    #####	Nouvelle instruction #####
+    */
+    
     //Lancement de la partie
     Player* player = new_player(name);
 	int dict_size = 0;
-	seed = time(NULL);
+	seed = __atoi(buffer_seed);
 	DictEntry *dict = generate_dict("../game/find_word/database/c.txt", &dict_size);
 	if (!dict) {
 		return NULL; // Failed to generate the dictionary
@@ -81,6 +99,7 @@ void *write_to_server(void *arg)
 	srand(seed);
 	char **lines = generate_lines(dict, dict_size, 5);
     run(player, lines, 5);
+    goto end_game;
 
     return NULL;
 }

@@ -1,5 +1,13 @@
 #include "player.h"
 
+/*
+######### NEW #########
+*/
+
+//New include
+#include <pthread.h>
+#include "../../Chat/chat.h"
+
 Player* new_player(char* name)
 {
     Player* p = malloc(sizeof(Player));
@@ -262,6 +270,16 @@ int run(Player* p, char** level, size_t n)
 
     // Free player's input.
     free_input(input, n);
+    
+    /*
+    ######### NEW #########
+    */
+    
+    sleep(2);
+    
+    system("clear");
+    
+    set_color(WHITE);
 
     return 1;
 }
