@@ -41,10 +41,11 @@ Game *init_game()
     }
     return all_game;
 }
-void set_ready(Game *ALL_GAME, int pid,char *name)
+void set_ready(Game *ALL_GAME, int pid, char *name)
 {
 
-    char *message = "Server: ";
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
     strcat(message, name);
     strcat(message, " is ready to play.\n");
     for (size_t i = 0; i < INITIAL; i++)
@@ -93,7 +94,8 @@ void display_games(const Game games[], int num_games)
 }
 void add_player(Game *ALL_GAME, int pid, char *name)
 {
-    char *message = "Server: ";
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
     strcat(message, name);
     strcat(message, " is connected.\n");
     for (size_t i = 0; i < INITIAL; i++)
@@ -125,7 +127,8 @@ void error(const char *message)
 
 void client_disconnected(Game *ALL_GAME, int pid, char *name)
 {
-    char *message = "Server: ";
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
     strcat(message, name);
     strcat(message, " is disconnected.\n");
     for (size_t i = 0; i < INITIAL; i++)
@@ -178,7 +181,7 @@ void *worker_message(void *args)
         }
         if (strcmp(client_message, "ready\n") == 0)
         {
-            set_ready(ALL_GAME, cfd,thread_args->Chat->name);
+            set_ready(ALL_GAME, cfd, thread_args->Chat->name);
             continue;
         }
         int e = write(second_cfd, buffer, strlen(buffer));
