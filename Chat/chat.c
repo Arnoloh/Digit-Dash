@@ -5,13 +5,15 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-// Nouvelle include
+//Nouvelle include
 #include "../Client/customer.h"
+#include "../game/display/player.h"
 
 #define PORT 13080
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
 char name[20];
+int req = 10;
 
 void *read_from_server(void *arg)
 {
@@ -30,11 +32,14 @@ void *read_from_server(void *arg)
         buffer[received] = '\0';
 
         // Détection du type de requête
-        // int req = detectRequest(buffer);
-        // stockRequest(buffer, req);
+         req = detectRequest(buffer);
+         stockRequest(buffer, req);
 
         printf("\r%s%s: ", buffer, name); // Effacez l'entrée en cours et imprimez le message, puis réimprimez l'entrée
         fflush(stdout);
+        
+        if(req == 0)
+        	break;
     }
 
     return NULL;
@@ -60,7 +65,22 @@ void *write_to_server(void *arg)
             perror("Error writing to server");
             break;
         }
+        
+        if(req == 0)
+        	break;
     }
+    
+    //Lancement de la partie
+    Player* player = new_player(name);
+	int dict_size = 0;
+	seed = time(NULL);
+	DictEntry *dict = generate_dict("../game/find_word/database/c.txt", &dict_size);
+	if (!dict) {
+		return NULL; // Failed to generate the dictionary
+	}
+	srand(seed);
+	char **lines = generate_lines(dict, dict_size, 5);
+    run(player, lines, 5);
 
     return NULL;
 }
@@ -95,7 +115,7 @@ int u2u()
     if (received > 0)
     {
         buffer[received] = '\0';
-        int req = detectRequest(buffer);
+        req = detectRequest(buffer);
         stockRequest(buffer, req);
 
         write(0, buffer, strlen(buffer));

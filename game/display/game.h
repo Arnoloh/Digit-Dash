@@ -10,3 +10,4 @@ typedef struct Game {
 } Game;
 
 Game* init_game(char* name_1, char* name_2);
+int start_Game(char* name_1, char* name_2);
