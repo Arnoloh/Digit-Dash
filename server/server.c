@@ -109,10 +109,15 @@ void add_player(Game *ALL_GAME, int pid, char *name)
             game->player_one = pid;
             game->name_player_one = name;
             write(game->player_two, message, strlen(message));
-            strcpy(message, "Serveur: ");
-            strcat(message, game->name_player_two);
-            strcat(message, " is connected.\n");
-            write(game->player_two, message, strlen(message));
+            if (game->player_two != 0)
+            {
+                bzero(message, BUFFER_SIZE);
+
+                strcpy(message, "Server: ");
+                strcat(message, game->name_player_two);
+                strcat(message, " is connected.\n");
+                write(game->player_two, message, strlen(message));
+            }
             return;
         }
         if (game->player_two == 0)
@@ -121,10 +126,15 @@ void add_player(Game *ALL_GAME, int pid, char *name)
             game->name_player_two = name;
 
             write(game->player_one, message, strlen(message));
-            strcpy(message, "Serveur: ");
-            strcat(message, game->name_player_one);
-            strcat(message, " is connected.\n");
-            write(game->player_two, message, strlen(message));
+            if (game->player_one != 0)
+            {
+
+                bzero(message, BUFFER_SIZE);
+                strcpy(message, "Server: ");
+                strcat(message, game->name_player_one);
+                strcat(message, " is connected.\n");
+                write(game->player_two, message, strlen(message));
+            }
             return;
         }
     }
