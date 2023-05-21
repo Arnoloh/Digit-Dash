@@ -216,7 +216,7 @@ void *handle_connection(void *args)
             break;
         }
     Chat_info player_chat = {{Chat, Chat}, name, NULL};
-    add_player(targs->ALL_GAME, targs->fd, name);
+    add_player(targs->ALL_GAME, targs->client_socket, name);
     targs->Chat = &player_chat;
 
     fprintf(fd, "Client connected: %i\n", cfd);
