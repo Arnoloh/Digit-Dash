@@ -10,7 +10,7 @@
 #include <string.h>
 #include <err.h>
 #include <unistd.h>
-#include <glib.h>
+#include <pthread.h>
 
 #include "../Chat/chat.h"
 
@@ -164,6 +164,9 @@ void MainMenu()
 			system ("../training/display/test");
 		else if(strcmp(message,"multijoueur") == 0)
 		{
+			printf("En attente de connexion ...\n");
+			sleep(1);
+			system("clear");
 			u2u();
 		}
 		else
