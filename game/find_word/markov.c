@@ -171,7 +171,7 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     return dict;
 }
 
-int main() 
+/*int main() 
 {
     int dict_size = 0;
     DictEntry *dict = generate_dict("database.txt", &dict_size);
@@ -187,6 +187,6 @@ int main()
     srand(time(NULL));
 
     //// Generate 5 random lines
-    char **lines = generate_lines(dict, dict_size, 5);
+    generate_lines(dict, dict_size, 5);
     return 0;
-}
+}*/
