@@ -118,6 +118,8 @@ void add_player(Game *ALL_GAME, int pid, char *name)
                 strcat(message, " is connected.\n");
                 write(game->player_two, message, strlen(message));
             }
+            else
+                write(game->player_one,"No one is connected.\n",strlen("No one is connected.\n"));
             return;
         }
         if (game->player_two == 0)
@@ -134,6 +136,8 @@ void add_player(Game *ALL_GAME, int pid, char *name)
                 strcat(message, " is connected.\n");
                 write(game->player_two, message, strlen(message));
             }
+            else
+                write(game->player_two,"No one is connected.\n",strlen("No one is connected.\n"));
             return;
         }
     }
