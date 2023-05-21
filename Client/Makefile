@@ -1,7 +1,7 @@
 #Makefile
 
 CC = gcc
-CFLAGS = `pkg-config --cflags glib-2.0` -Wall -Wextra -g -fsanitize=address
+CFLAGS = `pkg-config --cflags glib-2.0` -Wall -Wextra -g -fsanitize=address -std=c99
 CPPFLAGS = -g -fsanitize=address
 LDLIBS = `pkg-config --libs glib-2.0`
 
