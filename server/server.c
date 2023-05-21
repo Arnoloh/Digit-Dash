@@ -108,9 +108,9 @@ void add_player(Game *ALL_GAME, int pid, char *name)
         {
             game->player_one = pid;
             game->name_player_one = name;
-            write(game->player_two, message, strlen(message));
             if (game->player_two != 0)
             {
+                write(game->player_two, message, strlen(message));
                 bzero(message, BUFFER_SIZE);
 
                 strcpy(message, "Server: ");
@@ -125,10 +125,9 @@ void add_player(Game *ALL_GAME, int pid, char *name)
             game->player_two = pid;
             game->name_player_two = name;
 
-            write(game->player_one, message, strlen(message));
             if (game->player_one != 0)
             {
-
+                write(game->player_one, message, strlen(message));
                 bzero(message, BUFFER_SIZE);
                 strcpy(message, "Server: ");
                 strcat(message, game->name_player_one);
