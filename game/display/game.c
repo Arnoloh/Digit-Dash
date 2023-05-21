@@ -20,9 +20,11 @@ Game* init_game(char* name_1, char* name_2)
 
 int main(void)
 {
-    size_t n = 5;
-    char** level = malloc(sizeof(char*) * n);
+
     Game* game = init_game("Ethan", "Jessy");
+
+    size_t n = 5;
+
     int dict_size = 0;
     seed = time(NULL);
     DictEntry *dict = generate_dict("../find_word/database/c.txt", &dict_size);
@@ -37,7 +39,7 @@ int main(void)
     free(game->player_2);
     free(game);
 
-    free_input(level, n);
+
 
     return EXIT_SUCCESS;
 }

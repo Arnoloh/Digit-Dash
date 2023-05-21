@@ -150,12 +150,11 @@ void MainMenu()
 	char message[BUFFER_SIZE] = {0};
 	welcome();
 	help();
-	
+
 	while(1)
 	{	
-		
 		char *welcome = "Choisissez une option: ";
-		rewrite(STDOUT_FILENO, welcome, strlen(welcome));
+		write(0, welcome, strlen(welcome));
 		query(message);
 		
 		if(strcmp(message,"quitter") == 0)
@@ -164,7 +163,9 @@ void MainMenu()
 		else if(strcmp(message,"entrainement") == 0)
 			system ("../training/display/test");
 		else if(strcmp(message,"multijoueur") == 0)
+		{
 			u2u();
+		}
 		else
 		{
 			rewrite(STDOUT_FILENO, "Option invalide. Entrez [aide] pour connaître les options disponibles.\n", strlen("Option invalide. Entrez [aide] pour connaître les options disponibles.\n"));

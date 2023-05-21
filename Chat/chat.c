@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-//Nouvelle include
+// Nouvelle include
 #include "../Client/customer.h"
 
 #define PORT 13080
@@ -26,14 +26,13 @@ void *read_from_server(void *arg)
             perror("Error reading from server");
             break;
         }
-        
+
         buffer[received] = '\0';
-        
-        //Détection du type de requête
-		int req = detectRequest(buffer);
-		stockRequest(buffer, req);
-		
-        
+
+        // Détection du type de requête
+        // int req = detectRequest(buffer);
+        // stockRequest(buffer, req);
+
         printf("\r%s%s: ", buffer, name); // Effacez l'entrée en cours et imprimez le message, puis réimprimez l'entrée
         fflush(stdout);
     }
@@ -51,7 +50,7 @@ void *write_to_server(void *arg)
     {
         printf("%s: ", name);
         fflush(stdout);
-        fgets(buffer, BUFFER_SIZE, stdin);
+        read(0, buffer, BUFFER_SIZE);
 
         snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
 
@@ -90,24 +89,25 @@ int u2u()
 
     printf("Connecté au Digi-Chat\n");
 
-    char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE] = {0};
+
     ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
     if (received > 0)
     {
-    	buffer[received] = '\0';
-    	//Détection du type de requête
-		int req = detectRequest(buffer);
-		stockRequest(buffer, req);
-		
-        printf("%s", buffer);
+        buffer[received] = '\0';
+        int req = detectRequest(buffer);
+        stockRequest(buffer, req);
 
-        fgets(name, 20, stdin);
-        size_t i =0;
-        while(name[i] != '\0')
+        write(0, buffer, strlen(buffer));
+
+        read(0, name, 20);
+
+        size_t i = 0;
+        while (name[i] != '\0')
         {
             i++;
         }
-        name[i-1] = '\0';
+        name[i - 1] = '\0';
         ssize_t sent = send(sockfd, name, i, 0);
         if (sent < 0)
         {
