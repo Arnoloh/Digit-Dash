@@ -7,8 +7,10 @@
 typedef struct
 {
     int player_one;
+    char *name_player_one;
     bool player_one_ready;
     int player_two;
+    char *name_player_two;
     bool player_two_ready;
 } Game;
 
@@ -98,21 +100,31 @@ void add_player(Game *ALL_GAME, int pid, char *name)
     strcpy(message, "Server: ");
     strcat(message, name);
     strcat(message, " is connected.\n");
+
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
         if (game->player_one == 0)
         {
             game->player_one = pid;
-            if (game->player_two != 0)
-                write(game->player_two, message, strlen(message));
-
+            game->name_player_one = name;
+            write(game->player_two, message, strlen(message));
+            strcpy(message, "Serveur: ");
+            strcat(message, game->name_player_two);
+            strcat(message, " is connected.\n");
+            write(game->player_two, message, strlen(message));
             return;
         }
         if (game->player_two == 0)
         {
             game->player_two = pid;
+            game->name_player_two = name;
+
             write(game->player_one, message, strlen(message));
+            strcpy(message, "Serveur: ");
+            strcat(message, game->name_player_one);
+            strcat(message, " is connected.\n");
+            write(game->player_two, message, strlen(message));
             return;
         }
     }
