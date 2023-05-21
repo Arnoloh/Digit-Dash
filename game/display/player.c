@@ -55,7 +55,7 @@ void set_color(int color)
 /**
   \brief Get char one by one in the standart input.
 */
-int getch(void) 
+int get_ch(void) 
 {
     int ch;
     struct termios oldt;
@@ -223,7 +223,7 @@ int run(Player* p, char** level, size_t n)
         while (j < l)
         {
             // Ask character to player.
-            char c = getch();
+            char c = get_ch(void);
 
             // In case the input is a backspace.
             if ((c == BACKSPACE_KEY || c == DELETE_KEY) && j > 0)

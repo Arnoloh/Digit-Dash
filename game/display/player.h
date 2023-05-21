@@ -31,7 +31,7 @@ typedef struct Player {
 Player* new_player(char* name);
 void    display_stat(Player* p);
 void    set_color(int color);
-int     getch(void);
+int     get_ch(void);
 void    free_input(char** input, size_t n);
 void    display(char** input, char** level, size_t len);
 size_t  get_size(char** level, size_t len);

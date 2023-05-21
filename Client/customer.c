@@ -35,23 +35,6 @@ void rewrite(int fd, const void *buf, size_t count)
     return;
 }
 
-void echo(int fd_in, int fd_out)
-{
-    char buf[BUFFER_SIZE] = {0};
-    while(1)
-    {
-        ssize_t r = read(fd_in, buf, BUFFER_SIZE);
-        
-        if(!r)
-            break;
-        if(r == -1)
-            errx(3, "Error reading command");
-
-        rewrite(fd_out, buf, r);
-    }
-
-    return;
-}
 
 void query(char message[])
 {
