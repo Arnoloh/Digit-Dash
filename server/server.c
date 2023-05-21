@@ -43,17 +43,20 @@ Game *init_game()
 }
 void set_ready(Game *ALL_GAME, int pid)
 {
+    char *message = "Server: Your friend is ready to play.\n";
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
         if (game->player_one == pid)
         {
             game->player_one_ready = true;
+            write(game->player_two,message,strlen(message));
             return;
         }
         if (game->player_two == pid)
         {
             game->player_two_ready = true;
+            write(game->player_one,message,strlen(message));
             return;
         }
     }
@@ -87,20 +90,22 @@ void display_games(const Game games[], int num_games)
 }
 void add_player(Game *ALL_GAME, int pid)
 {
-
+    char *message = "Server: Someone is connected.\n";
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
         if (game->player_one == 0)
         {
             game->player_one = pid;
-            // display_games(ALL_GAME, 5);
+            if (game->player_two != 0)
+                write(game->player_two, message, strlen(message));
+
             return;
         }
         if (game->player_two == 0)
         {
             game->player_two = pid;
-            // display_games(ALL_GAME, 5);
+            write(game->player_one, message, strlen(message));
             return;
         }
     }
@@ -115,6 +120,7 @@ void error(const char *message)
 
 void client_disconnected(Game *ALL_GAME, int pid)
 {
+    char *message = "Server: Your friends is disconnected.\n";
 
     for (size_t i = 0; i < INITIAL; i++)
     {
@@ -123,13 +129,14 @@ void client_disconnected(Game *ALL_GAME, int pid)
         if (game->player_one == pid)
         {
             game->player_one = 0;
-            // display_games(ALL_GAME, 5);
+            write(game->player_two, message, strlen(message));
             return;
         }
         if (game->player_two == pid)
         {
             game->player_two = 0;
-            // display_games(ALL_GAME, 5);
+            write(game->player_one, message, strlen(message));
+
             return;
         }
     }
@@ -267,7 +274,7 @@ void *lunch_game(void *args)
                 char *serveur_message = (char *)malloc(final_message_length);
                 strcpy(serveur_message, serveur_message_stub);
                 strcat(serveur_message, seed_str);
-
+                strcat(serveur_message,"\n");
                 game->player_one_ready = false;
                 game->player_two_ready = false;
 
