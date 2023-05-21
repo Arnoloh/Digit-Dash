@@ -160,12 +160,14 @@ void client_disconnected(Game *ALL_GAME, int pid, char *name)
         if (game->player_one == pid)
         {
             game->player_one = 0;
+            game->player_one_ready = false;
             write(game->player_two, message, strlen(message));
             return;
         }
         if (game->player_two == pid)
         {
             game->player_two = 0;
+            game->player_two_ready = false;
             write(game->player_one, message, strlen(message));
 
             return;
