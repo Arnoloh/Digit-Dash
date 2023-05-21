@@ -107,7 +107,7 @@ void add_player(Game *ALL_GAME, int pid, char *name)
         if (game->player_one == 0)
         {
             game->player_one = pid;
-            game->player_one_ready = false;
+
             game->name_player_one = name;
             if (game->player_two != 0)
             {
@@ -125,7 +125,7 @@ void add_player(Game *ALL_GAME, int pid, char *name)
         }
         if (game->player_two == 0)
         {
-            game->player_two_ready = false;
+
             game->player_two = pid;
             game->name_player_two = name;
 
