@@ -23,6 +23,7 @@ void *read_from_server(void *arg)
     int sockfd = *(int *)arg;
     char buffer[BUFFER_SIZE];
 
+	end_game:
     while (1)
     {
         ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
@@ -54,35 +55,6 @@ void *read_from_server(void *arg)
         	break;
         }
     }
-
-    return NULL;
-}
-
-void *write_to_server(void *arg)
-{
-    int sockfd = *(int *)arg;
-    char buffer[BUFFER_SIZE];
-    char formatted_buffer[BUFFER_SIZE];
-
-	end_game:
-    while (1)
-    {
-        printf("%s: ", name);
-        fflush(stdout);
-        read(0, buffer, BUFFER_SIZE);
-
-        snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
-
-        ssize_t sent = send(sockfd, formatted_buffer, strlen(formatted_buffer), 0);
-        if (sent < 0)
-        {
-            perror("Error writing to server");
-            break;
-        }
-        
-        if(req == 0)
-        	break;
-    }
     
     /*
     #####	Nouvelle instruction #####
@@ -99,7 +71,36 @@ void *write_to_server(void *arg)
 	srand(seed);
 	char **lines = generate_lines(dict, dict_size, 5);
     run(player, lines, 5);
+    req = 1;
     goto end_game;
+
+    return NULL;
+}
+
+void *write_to_server(void *arg)
+{
+    int sockfd = *(int *)arg;
+    char buffer[BUFFER_SIZE];
+    char formatted_buffer[BUFFER_SIZE];
+
+    while (1)
+    {
+     	while(req != 0)
+     	{  	
+		    printf("%s: ", name);
+		    fflush(stdout);
+		    read(0, buffer, BUFFER_SIZE);
+
+		    snprintf(formatted_buffer, sizeof(formatted_buffer), "%s", buffer);
+
+		    ssize_t sent = send(sockfd, formatted_buffer, strlen(formatted_buffer), 0);
+		    if (sent < 0)
+		    {
+		        perror("Error writing to server");
+		        break;
+        	}
+        }
+    }
 
     return NULL;
 }
