@@ -5,10 +5,15 @@ int req = 10;
 char name[20];
 pthread_mutex_t lock;
 WINDOW *message_win, *input_win;
-
+typedef struct thread_info
+{
+    int sockfd;
+    int level_seed;
+} thread_info;
 void *read_from_server(void *arg)
 {
-    int sockfd = *(int *)arg;
+    thread_info *info = arg;
+    int sockfd = info->sockfd;
     char buffer[BUFFER_SIZE];
 
     while (1)
@@ -51,6 +56,8 @@ void *read_from_server(void *arg)
         if (req == 0)
         {
             strcpy(buffer_seed, buffer);
+
+            info->level_seed = atoi(buffer_seed);
             break;
         }
     }
@@ -62,8 +69,8 @@ void *read_from_server(void *arg)
 void *write_to_server(void *arg)
 {
     int sockfd = *(int *)arg;
-    char buffer[BUFFER_SIZE];
-    char formatted_buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE] = {0};
+    char formatted_buffer[BUFFER_SIZE] = {0};
 
     while (1)
     {
@@ -122,7 +129,8 @@ int connect_to_server()
 
     return sockfd;
 }
-char *u2u(int sockfd, bool name_already,unsigned int *level_seed)
+
+char *u2u(int sockfd, bool name_already, unsigned int *level_seed)
 {
     // Initialization of ncurses
     initscr();
@@ -180,8 +188,8 @@ char *u2u(int sockfd, bool name_already,unsigned int *level_seed)
         }
     }
     pthread_t read_thread, write_thread;
-
-    if (pthread_create(&read_thread, NULL, read_from_server, (void *)&sockfd) != 0)
+    thread_info info = {sockfd, 0};
+    if (pthread_create(&read_thread, NULL, read_from_server, (void *)&info) != 0)
     {
         perror("Error creating read thread");
         return 1;
@@ -195,10 +203,9 @@ char *u2u(int sockfd, bool name_already,unsigned int *level_seed)
 
     pthread_join(read_thread, &buffer_seed);
     pthread_cancel(write_thread);
-    write(sockfd, buffer_seed, strlen(buffer_seed));
-    // lancement
-    *level_seed = atoi(buffer_seed);
 
+    // lancement
+    *level_seed = info.level_seed;
 
     // End of ncurses session
     delwin(message_win);

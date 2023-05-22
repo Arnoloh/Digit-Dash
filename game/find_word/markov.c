@@ -110,9 +110,9 @@ char *get_next_line(DictEntry *dict, int dict_size, char *line)
 
 // Generate lines of text from the dictionary
 // Generate lines of text from the dictionary and return them as an array of strings
-char **generate_lines(DictEntry *dict, int dict_size, int num_lines, int level_seed)
+char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
 {
-    srand(level_seed);
+
     char **lines = malloc(num_lines * sizeof(char *));
     char *line = get_random_line(dict, dict_size);
     for (int i = 0; i < num_lines; i++)
