@@ -181,7 +181,6 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     {
          return 1; // Failed to generate the dictionary
     }
-
     // // // print_dict(dict, dict_size);
 
     // // // Seed the random number generator
@@ -191,3 +190,4 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     generate_lines(dict, dict_size, 5);
     return 0;
 }*/
+
