@@ -3,6 +3,7 @@
 #include "../game.h"
 #include "../../../Chat/chat.h"
 #include "../../../tools/tools.h"
+#include "../help/help.h"
 
 #define NB_BOUTONS 4
 extern int req;

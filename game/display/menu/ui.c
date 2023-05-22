@@ -130,6 +130,11 @@ void display_menu(int largeur, int hauteur)
 
         goto end_game;
     }
+    else if (boutonSelectionne == 2)
+    {
+        display_help();
+        display_menu(largeur, hauteur);
+    }
 }
 
 void menu()
