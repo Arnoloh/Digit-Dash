@@ -33,7 +33,7 @@ void display_help()
     
 
     // Grande box à gauche
-    WINDOW *leftbox = subwin(mainwin, height - 10, width / 2 - 2, 9, 1);
+    WINDOW *leftbox = subwin(mainwin, height - 40, width / 2 - 2, 9, 1);
     //wbkgd(leftbox, COLOR_PAIR(20));
     box(leftbox, 0, 0);
     mvwprintw(leftbox, 0, 2, "[ The game ]");
@@ -46,12 +46,35 @@ void display_help()
     //wbkgd(statsbox, COLOR_PAIR(20));
     box(statsbox, 0, 0);
     mvwprintw(statsbox, 0, 2, "[ Rules ]");
+    mvwprintw(statsbox, 2, 2, "Here are the Digit Chat rules:");
+    mvwprintw(statsbox, 4, 2, "1) Speed: The key to victory is speed.");
+    mvwprintw(statsbox, 5, 4, "You will have to type the lines of code");
+    mvwprintw(statsbox, 6, 4, "as quickly as possible to accumulate points");
+    mvwprintw(statsbox, 7, 4, "and gain the advantage over your opponent.");
+    mvwprintw(statsbox, 9, 2, "2) Accuracy: Accuracy is also crucial.");
+    mvwprintw(statsbox, 10, 4, "Typing errors will penalize you by reducing your score.");
+    mvwprintw(statsbox, 11, 4, "Be careful and make sure you type each character correctly.");
+    mvwprintw(statsbox, 13, 2, "3) Advance without return: Once you have crossed a line of code,");
+    mvwprintw(statsbox, 14, 4, "there is no going back. Be sure to read and understand each line");
+    mvwprintw(statsbox, 15, 4, "before committing, as any mistakes will be final.");
+
 
     // Petite box avec barre de progression
     WINDOW *escape = subwin(mainwin, 3, width / 3, 1, 1);
     //wbkgd(progressbar, COLOR_PAIR(20));
     box(escape, 0, 0);
     mvwprintw(escape, 1, 1, " Press escape to return to the menu");
+
+    // Petite box avec barre de progression
+    WINDOW *help = subwin(mainwin, 10, width / 2 - 2, height - 31, 1);
+    //wbkgd(progressbar, COLOR_PAIR(20));
+    box(help, 0, 0);
+    mvwprintw(help, 0, 2, "[ How to play multiplayer ]");
+    mvwprintw(help, 3, 2, "Select multiplayer in menu.");
+    mvwprintw(help, 4, 2, "A chat box will appear, wait for another player.");
+    mvwprintw(help, 5, 2, "When two players are present, type \"ready\" in the chat.");
+    mvwprintw(help, 6, 2, "When both players are ready the game starts automatically.");
+
 
     // Affiche le nom du jeu
     display_little_name_help(mainwin, width, height);

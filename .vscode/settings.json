@@ -7,6 +7,12 @@
         "game.h": "c",
         "gameui.h": "c",
         "ncurses.h": "c",
-        "ui.h": "c"
+        "ui.h": "c",
+        "array": "c",
+        "compare": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

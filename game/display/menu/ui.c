@@ -9,6 +9,13 @@ const char *boutons[NB_BOUTONS] = {
     "Quitter",
 };
 
+const char *description[NB_BOUTONS] = {
+    "The best place to improve your speed.          ",
+    "Compete against your friends, the fastest wins!",
+    "Get all your questions answered.               ",
+    "Don't quit please :(                           "
+};
+
 void display_name(int largeur, int hauteur)
 {
 
@@ -78,14 +85,9 @@ void display_menu(int largeur, int hauteur)
             // Déplacement vers le bouton suivant
             boutonSelectionne = (boutonSelectionne + 1) % NB_BOUTONS;
             break;
-        case '\n':
-            // Action du bouton sélectionné
-            attron(COLOR_PAIR(2));
-            mvprintw(y + NB_BOUTONS + 2, x - 6, "Vous avez choisi %s", boutons[boutonSelectionne]);
-            attroff(COLOR_PAIR(2));
-            break;
         }
-
+        
+        mvprintw(y + NB_BOUTONS + 2, x - 10, "%s", description[boutonSelectionne]);
         refresh();
 
         // Sortie de la boucle lorsque le bouton Quitter est sélectionné

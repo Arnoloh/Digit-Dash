@@ -37,7 +37,7 @@ void display_win(WINDOW** all_win)
     WINDOW *leftbox = subwin(mainwin, height - 6, width / 2 - 2, 5, 1);
     //wbkgd(leftbox, COLOR_PAIR(20));
     box(leftbox, 0, 0);
-    mvwprintw(leftbox, 0, 2, "[ Page de code | 1/10 ]");
+    mvwprintw(leftbox, 0, 2, "[ Pages of code ]");
 
     // Petite box avec barre de progression
     WINDOW *progressbar = subwin(mainwin, 4, width / 2 - 2, 1, 1);
