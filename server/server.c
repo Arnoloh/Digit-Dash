@@ -306,7 +306,7 @@ void *lunch_game(void *args)
         for (size_t i = 0; i < INITIAL; i++)
         {
             Game *game = &ALL_GAME[i];
-            if (game->player_one_ready || game->player_two_ready)
+            if (game->player_one_ready && game->player_two_ready)
             {
                 int seed = generate_seed();
                 char *seed_str = int_to_string(seed);
@@ -320,13 +320,13 @@ void *lunch_game(void *args)
                 strcat(serveur_message, "\n");
                 game->player_one_ready = false;
                 game->player_two_ready = false;
-                // write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                // write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                // sleep(1);
+                write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                sleep(1);
 
-                // write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                // write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                // sleep(1);
+                write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                sleep(1);
 
                 write(game->player_one, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
                 write(game->player_two, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
