@@ -216,7 +216,7 @@ void *worker_message(void *args)
             set_ready(ALL_GAME, cfd, thread_args->Chat->name);
             continue;
         }
-        printf("%s\n",client_message);
+
         int e = write(second_cfd, buffer, strlen(buffer));
         if (e < 0)
         {
