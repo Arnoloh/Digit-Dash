@@ -1,233 +1,193 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <ctype.h>
-#include "list.h"
+#include "markov.h"
 
-
-int indexofword(struct inlist *ans)
+// delete begin spaces
+char *trim_leading_spaces(char *str)
 {
-    srand(time(NULL));
-    struct inlist *temp=ans;
-    int r = rand() % (list_len(ans)+1);
-    for (int i=0; i<r; i++)
+    while (*str == ' ')
     {
-        temp=temp->next;
+        str++;
     }
-    return temp->value;
+    return str;
+}
+// delete end spaces
+void trim_trailing_spaces(char *str)
+{
+    char *end = str + strlen(str);
+    while (end > str && *(end - 1) == ' ')
+    {
+        end--;
+    }
+    *end = '\0';
 }
 
-char *findword(struct list *list, struct inlist *ans)
+void add_line(DictEntry *dict, int *dict_size, char *line, char *next_line)
 {
-    int c = indexofword(ans);
-    struct list *temp=list;
-    for (int i=0; i<c+1; i++)
-    {
-        temp=temp->next;
-    }
-    return temp->value;
-}
+    next_line = trim_leading_spaces(next_line);
+    trim_trailing_spaces(next_line);
+    line = trim_leading_spaces(line);
+    trim_trailing_spaces(line);
 
-void remove_newline(char *str) 
-{
-    size_t j = 0;
-
-    for (size_t i = 0; i < strlen(str); i++) 
+    for (int i = 0; i < *dict_size; i++)
     {
-        if (str[i] != '\n') 
+        if (strcmp(dict[i].line, line) == 0)
         {
-            str[j++] = str[i];
+            Node *new_node = (Node *)malloc(sizeof(Node));
+            new_node->line = malloc(strlen(next_line) + 1);
+            strcpy(new_node->line, next_line);
+            new_node->next = dict[i].next_lines;
+            dict[i].next_lines = new_node;
+            dict[i].count++;
+            return;
         }
     }
 
-    str[j] = '\0';
+    dict[*dict_size].next_lines = (Node *)malloc(sizeof(Node));
+    dict[*dict_size].next_lines->line = malloc(strlen(next_line) + 1);
+    strcpy(dict[*dict_size].next_lines->line, next_line);
+    dict[*dict_size].next_lines->next = NULL;
+    dict[*dict_size].line = malloc(strlen(line) + 1);
+    strcpy(dict[*dict_size].line, line);
+    dict[*dict_size].count = 1;
+    (*dict_size)++;
 }
 
-char *filetochar(char *filename)
+void print_dict(DictEntry *dict, int dict_size)
 {
-    FILE *file = fopen(filename, "r");
-    if (file == NULL) {
+    for (int i = 0; i < dict_size; i++)
+    {
+        printf("\033[0;34m%s\033[0;37m -> ", dict[i].line);
+        Node *current = dict[i].next_lines;
+        while (current != NULL)
+        {
+            printf("\033[0;31m%s", current->line);
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+// Generate a random number between 0 and max (exclusive)
+int rand_num(int max)
+{
+    int new = rand() % max;
+    srand(new);
+    return new;
+}
+// always same
+int rand_without_seed(int max)
+{
+    return rand() % max;
+}
+
+// Fetch a random line from the dictionary
+char *get_random_line(DictEntry *dict, int dict_size)
+{
+    int random_index = rand_num(dict_size);
+    return dict[random_index].line;
+}
+
+// Fetch a line from the dictionary that follows the given line
+char *get_next_line(DictEntry *dict, int dict_size, char *line)
+{
+    // find the line in the dictionary
+    for (int i = 0; i < dict_size; i++)
+    {
+        if (strcmp(dict[i].line, line) == 0)
+        {
+            // fetch a random next line
+            int random_index = rand_without_seed(dict[i].count);
+            Node *current = dict[i].next_lines;
+            for (int j = 0; j < random_index; j++)
+            {
+                current = current->next;
+            }
+            return current->line;
+        }
+    }
+    // if the line was not found, return a random line
+    return get_random_line(dict, dict_size);
+}
+
+// Generate lines of text from the dictionary
+// Generate lines of text from the dictionary and return them as an array of strings
+char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
+{
+
+    char **lines = malloc(num_lines * sizeof(char *));
+    char *line = get_random_line(dict, dict_size);
+    for (int i = 0; i < num_lines; i++)
+    {
+
+
+        // allocate a new string for the line and copy the line into it
+        lines[i] = malloc((strlen(line) + 1) * sizeof(char)); // +1 for null terminator
+        strcpy(lines[i], line);
+
+        line = get_next_line(dict, dict_size, line);
+    }
+    return lines;
+}
+
+DictEntry *generate_dict(const char *file_path, int *dict_size)
+{
+    FILE *file = fopen(file_path, "r");
+    if (file == NULL)
+    {
+        printf("Could not open file.\n");
         return NULL;
     }
 
-    // Determine the file size
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    rewind(file);
+    DictEntry *dict = malloc(10000 * sizeof(DictEntry));
 
-    // Allocate memory to store the file contents
-    char *buffer = malloc(file_size * sizeof(char));
-    if (buffer == NULL) {
-        fclose(file);
+    char *line = NULL, *next_line = NULL;
+    size_t len = 0;
+
+    if (getline(&line, &len, file) == -1)
+    {
+        printf("File is empty.\n");
         return NULL;
     }
 
-    // Read the file into the buffer
-    size_t bytes_read = fread(buffer, sizeof(char), file_size, file);
-    if (bytes_read < file_size) {
-        free(buffer);
-        fclose(file);
-        return NULL;
+    // remove trailing newline character
+    line[strcspn(line, "\n")] = 0;
+    line = trim_leading_spaces(line);
+    trim_trailing_spaces(line);
+
+    while (getline(&next_line, &len, file) != -1)
+    {
+        // remove trailing newline character
+        next_line[strcspn(next_line, "\n")] = 0;
+
+        add_line(dict, dict_size, line, next_line);
+        free(line);
+        line = next_line;
+        next_line = NULL;
     }
+
+    // don't forget to free the last line
+    free(line);
 
     fclose(file);
-    return buffer;
+
+    return dict;
 }
 
-struct list *chartolist(char *database)
+/*int main()
 {
-        struct list* head = NULL;
-        struct list* tail = NULL;
+    int dict_size = 0;
+    DictEntry *dict = generate_dict("database.txt", &dict_size);
 
-        char* pch = strtok(database, " \n");
-        while (pch != NULL) 
-        {
-            struct list* node = init_list(pch);
-            if (tail == NULL) 
-            {
-                head = node;
-                tail = node;
-            } 
-            else 
-            {
-                tail->next = node;
-                tail = node;
-            }
-            pch = strtok(NULL, " ");
-        }
-        
-        return head; 
-}
-
-struct inlist *create_index_list(char *word, struct list *list) 
-{
-    struct inlist *result = NULL;
-    struct inlist *temp = NULL;
-    int index = 0;
-    struct list *a=list;
-    while (a != NULL)
+    if (!dict)
     {
-        if (strcmp(word, a->value) == 0)
-        {
-                struct inlist *node = malloc(sizeof(struct inlist));
-                node->value = index;
-                node->next = NULL;
-
-                if (result == NULL)
-                {
-                    result = node;
-                    temp = result;
-                }
-                else
-                {
-                    temp->next = node;
-                    temp = temp->next;
-                }
-        }
-
-        a = a->next;
-        index++;
+         return 1; // Failed to generate the dictionary
     }
+    // // // print_dict(dict, dict_size);
 
-    return result;
-}
-
-char * new_word(char* word,char *database)
-{
-    char *file=filetochar(database);
-    struct list *list=chartolist(file);
-    struct inlist *inlist=create_index_list(word,list);
-    char *ans=findword(list,inlist);
-    //printf("%s ",ans);
-    return ans;
-}
-
-void toLowerCase(char *str) 
-{
-    for(size_t i = 0; i < strlen(str); i++) 
-    {
-        str[i] = tolower(str[i]);
-    }
-}
-
-char *choosestartword(struct list *list)
-{
+    // // // Seed the random number generator
     srand(time(NULL));
-    int r = rand() % (list_len(list)+1);
-    struct list *temp=list;
-    for (int i=0; i<r; i++)
-    {
-        temp=temp->next;
-    }
-    return temp->value;
-}
 
-char *function()
-{
-    char *file=filetochar("database/c.txt");
-    struct list *a=chartolist(file);
-    char *start=choosestartword(a);
-    printf("%s ",start);
-    char *temp=new_word(start,"database/c.txt");
+    //// Generate 5 random lines
+    generate_lines(dict, dict_size, 5);
+    return 0;
+}*/
 
-    char* resultat = malloc(sizeof(char));
-
-    for (int i=0; i<30; i++)
-    {
-        temp = new_word(temp,"database/c.txt");
-
-        char* nouveau = realloc(resultat, strlen(resultat) + strlen(temp) + 1);
-        resultat = nouveau;
-        strcat(resultat, temp); // Ajouter la nouvelle chaîne générée à la chaîne de résultat
-    }
-    return resultat;
-}
-
-int nb_underscore(char *string)
-{
-    int count = 0;
-    int len = strlen(string);
-
-    for (int i = 0; i < len; i++) 
-    {
-        if (string[i] == '\n') 
-        {
-            count++;
-        }
-    }
-
-    return count;
-}
-
-char **str_to_list(char *string)
-{
-    int taille_tableau=nb_underscore(string);
-    char** result = malloc(sizeof(char*) * (taille_tableau + 1));
-
-    int index = 0;
-    char* token = strtok(string, "\n");
-
-    while (token != NULL) 
-    {
-        result[index] = (char*)malloc(strlen(token) + 1);
-
-        if (result[index] == NULL) 
-        {
-            printf("Erreur d'allocation de mémoire\n");
-            exit(EXIT_FAILURE);
-        }
-
-        strcpy(result[index], token);
-        token = strtok(NULL, "\n");
-        index++;
-    }
-    return result;
-}
-
-int main()
-{
-    char *a=function();
-    char **b=str_to_list(a);
-    return b;
-}

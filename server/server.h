@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <err.h>
+#include <stdbool.h>
+
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -13,6 +15,8 @@
 #include <netinet/in.h>
 #include "../tools/tools.h"
 #include <strings.h>
+#include <time.h>
 int server(void);
+int generate_seed();
 
 

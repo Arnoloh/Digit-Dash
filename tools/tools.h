@@ -1,4 +1,4 @@
-
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +6,7 @@
 #define MAX_STRING_LENGTH 1024
 enum TYPE
 {
-    Game_info,
+    Player_Info,
     Chat,
 };
 typedef struct

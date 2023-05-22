@@ -7,11 +7,22 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <ncurses.h>
 
+#include "../Client/customer.h"
+#include "../game/display/player.h"
+#include "../game/find_word/markov.h"
 
-void u2u(void);
+#define PORT 13080
+#define IP "82.65.173.135"
+#define BUFFER_SIZE 256
 
-struct message {
+int connect_to_server();
+char *u2u(int sockfd, bool name_already,unsigned int *level_seed);
+struct message
+{
     int id;
     char *message;
     char *name;

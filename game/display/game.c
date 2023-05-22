@@ -1,6 +1,8 @@
 #include "game.h"
 
-Game* init_game(char* name_1, char* name_2)
+unsigned int train_seed;
+
+Game* init_game(char* name_1)
 {
     // Initialisation of the game.
     Game* game = malloc(sizeof(Game));
@@ -10,38 +12,32 @@ Game* init_game(char* name_1, char* name_2)
 
     // Create players.
     Player* p1 = new_player(name_1);
-    Player* p2 = new_player(name_2);
 
     game->player_1 = p1;
-    game->player_2 = p2;
 
     return game;
 }
 
-int main(void)
+void start(void)
 {
-    size_t n = 3;
-    char** level = malloc(sizeof(char*) * n);
+    Game* game = init_game("Training player");
 
-    for (size_t i = 0 ; i < n ; i++)    
+    int dict_size = 0;
+    DictEntry* dict = generate_dict("game/find_word/database/c.txt", &dict_size);
+    if (!dict)
     {
-        level[i] = malloc(sizeof(char) * 11);
-
-        for (size_t j = 0 ; j < 10 ; j++)
-            level[i][j] = 'a';
-        
-        level[i][10] = '\0';
+        return; // Failed to generate the dictionary
     }
 
-    Game* game = init_game("Ethan", "Jessy");
+    int progress = 0;
+    srand(time(NULL));
 
-    run(game->player_1, level, n);
+    while (progress < 200)
+    {
+        char **lines = generate_lines(dict, dict_size, 5);
+        progress = run(game->player_1, lines, 5, progress);
+    }
 
     free(game->player_1);
-    free(game->player_2);
     free(game);
-
-    free_input(level, n);
-
-    return EXIT_SUCCESS;
 }

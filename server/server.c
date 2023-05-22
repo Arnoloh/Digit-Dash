@@ -7,7 +7,11 @@
 typedef struct
 {
     int player_one;
+    char *name_player_one;
+    bool player_one_ready;
     int player_two;
+    char *name_player_two;
+    bool player_two_ready;
 } Game;
 
 struct thread_data
@@ -18,7 +22,13 @@ struct thread_data
     Chat_info *Chat;
     Game *ALL_GAME;
 };
+
 size_t INITIAL = 5;
+int generate_seed()
+{
+    srand(time(0));
+    return rand();
+}
 
 Game *init_game()
 {
@@ -28,10 +38,35 @@ Game *init_game()
         Game *game = &all_game[i];
         game->player_one = 0;
         game->player_two = 0;
+        game->player_one_ready = false;
+        game->player_two_ready = false;
     }
     return all_game;
 }
+void set_ready(Game *ALL_GAME, int pid, char *name)
+{
 
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
+    strcat(message, name);
+    strcat(message, " is ready to play.\n");
+    for (size_t i = 0; i < INITIAL; i++)
+    {
+        Game *game = &ALL_GAME[i];
+        if (game->player_one == pid)
+        {
+            game->player_one_ready = true;
+            write(game->player_two, message, strlen(message));
+            return;
+        }
+        if (game->player_two == pid)
+        {
+            game->player_two_ready = true;
+            write(game->player_one, message, strlen(message));
+            return;
+        }
+    }
+}
 int find_fd(Game *ALL_GAME, int pid)
 {
     for (size_t i = 0; i < INITIAL; i++)
@@ -47,8 +82,7 @@ int find_fd(Game *ALL_GAME, int pid)
         {
             return game->player_one;
         }
-    }
-    // s// printf("not found\n");
+    };
     return 0;
 }
 void display_games(const Game games[], int num_games)
@@ -60,8 +94,12 @@ void display_games(const Game games[], int num_games)
         printf("%10d | %10d\n", games[i].player_one, games[i].player_two);
     }
 }
-void add_player(Game *ALL_GAME, int pid)
+void add_player(Game *ALL_GAME, int pid, char *name)
 {
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
+    strcat(message, name);
+    strcat(message, " is connected.\n");
 
     for (size_t i = 0; i < INITIAL; i++)
     {
@@ -69,13 +107,39 @@ void add_player(Game *ALL_GAME, int pid)
         if (game->player_one == 0)
         {
             game->player_one = pid;
-            // display_games(ALL_GAME, 5);
+
+            game->name_player_one = name;
+            if (game->player_two != 0)
+            {
+                write(game->player_two, message, strlen(message));
+                bzero(message, BUFFER_SIZE);
+
+                strcpy(message, "Server: ");
+                strcat(message, game->name_player_two);
+                strcat(message, " is connected.\n");
+                write(game->player_two, message, strlen(message));
+            }
+            else
+                write(game->player_one, "Server: No one is connected.\n", strlen("Server: No one is connected.\n"));
             return;
         }
         if (game->player_two == 0)
         {
+
             game->player_two = pid;
-            // display_games(ALL_GAME, 5);
+            game->name_player_two = name;
+
+            if (game->player_one != 0)
+            {
+                write(game->player_one, message, strlen(message));
+                bzero(message, BUFFER_SIZE);
+                strcpy(message, "Server: ");
+                strcat(message, game->name_player_one);
+                strcat(message, " is connected.\n");
+                write(game->player_two, message, strlen(message));
+            }
+            else
+                write(game->player_two, "Server: No one is connected.\n", strlen("Server: No one is connected.\n"));
             return;
         }
     }
@@ -83,29 +147,36 @@ void add_player(Game *ALL_GAME, int pid)
     return;
 }
 void error(const char *message)
-
 {
     perror(message);
     exit(1);
 }
 
-void client_disconnected(Game *ALL_GAME, int pid)
+void client_disconnected(Game *ALL_GAME, int pid, char *name)
 {
-
+    char message[BUFFER_SIZE] = {0};
+    strcpy(message, "Server: ");
+    strcat(message, name);
+    strcat(message, " is disconnected.\n");
     for (size_t i = 0; i < INITIAL; i++)
     {
         Game *game = &ALL_GAME[i];
 
         if (game->player_one == pid)
         {
-            game->player_two = 0;
-            // display_games(ALL_GAME, 5);
+            game->player_one = 0;
+            game->player_one_ready = false;
+            if (game->player_two != 0)
+                write(game->player_two, message, strlen(message));
             return;
         }
         if (game->player_two == pid)
         {
-            game->player_one = 0;
-            // display_games(ALL_GAME, 5);
+            game->player_two = 0;
+            game->player_two_ready = false;
+            if (game->player_one != 0)
+                write(game->player_one, message, strlen(message));
+
             return;
         }
     }
@@ -117,7 +188,7 @@ void *worker_message(void *args)
     int cfd = thread_args->client_socket;
     FILE *fd = thread_args->fd;
     Game *ALL_GAME = thread_args->ALL_GAME;
-    char client_message[BUFFER_SIZE];
+    char client_message[BUFFER_SIZE] = {0};
     int read_size;
     int second_cfd = find_fd(ALL_GAME, cfd);
 
@@ -133,19 +204,27 @@ void *worker_message(void *args)
         fprintf(fd, "%s: %s", thread_args->Chat->name, client_message);
         fflush(fd);
         second_cfd = find_fd(ALL_GAME, cfd);
+
         if (second_cfd == 0)
         {
-            write(cfd, "No one is connected.\n", strlen("No one is connected.\n"));
+            write(cfd, "Server: No one is connected.\n", strlen("Server: No one is connected.\n"));
             continue;
         }
+
+        if (strcmp(client_message, "ready") == 0)
+        {
+            set_ready(ALL_GAME, cfd, thread_args->Chat->name);
+            continue;
+        }
+      
         int e = write(second_cfd, buffer, strlen(buffer));
         if (e < 0)
         {
             write(cfd, "Your friend is disconnected.\n", strlen("Your friend is disconnected.\n"));
-            // client_disconnected(ALL_GAME, cfd);
             continue;
         }
         bzero(client_message, BUFFER_SIZE);
+        bzero(buffer, BUFFER_SIZE);
     }
 
     close(cfd);
@@ -166,34 +245,98 @@ void *handle_connection(void *args)
     write(cfd, server_ask, strlen(server_ask));
     char name[20] = {0};
     read(cfd, name, 20);
+
     for (int i = 0; i < 20; i++)
         if (name[i] == '\n')
         {
             name[i] = '\0';
             break;
         }
-
     Chat_info player_chat = {{Chat, Chat}, name, NULL};
+    add_player(targs->ALL_GAME, targs->client_socket, name);
     targs->Chat = &player_chat;
 
     fprintf(fd, "Client connected: %i\n", cfd);
 
     if (pthread_create(&th, NULL, worker_message, args) != 0)
         errx(1, "handle_connection: error creating thread.");
-    // if (pthread_create(&th, NULL, worker_message_reading, args) != 0)
-    //     errx(1, "handle_connection: error reading creating thread.");
+
     while (1)
     {
+
         if (fcntl(cfd, F_GETFD) == -1)
         {
             fprintf(fd, "Client disconnected: %i\n", cfd);
             fflush(fd);
-            client_disconnected(targs->ALL_GAME, find_fd(targs->ALL_GAME,cfd));
+            client_disconnected(targs->ALL_GAME, cfd, name);
             break;
         }
     }
     pthread_exit(NULL);
     free(args);
+    return NULL;
+}
+char *int_to_string(int num)
+{
+    // Determine the length of the integer string representation
+    int length = snprintf(NULL, 0, "%d", num);
+
+    // Allocate memory for the string (including the null-terminator)
+    char *str = (char *)malloc(length + 1);
+
+    // Check if the memory allocation was successful
+    if (!str)
+    {
+        fprintf(stderr, "Memory allocation error!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Convert the integer to a string using sprintf
+    sprintf(str, "%d", num);
+
+    return str;
+}
+void *lunch_game(void *args)
+{
+    Game *ALL_GAME = args;
+    while (1)
+    {
+        /* code */
+
+        for (size_t i = 0; i < INITIAL; i++)
+        {
+            Game *game = &ALL_GAME[i];
+            if (game->player_one_ready && game->player_two_ready)
+            {
+                int seed = generate_seed();
+                char *seed_str = int_to_string(seed);
+
+                char *serveur_message_stub = "Server seed: ";
+                int final_message_length = strlen(serveur_message_stub) + strlen(seed_str) + 1;
+
+                char *serveur_message = (char *)malloc(final_message_length);
+                strcpy(serveur_message, serveur_message_stub);
+                strcat(serveur_message, seed_str);
+                strcat(serveur_message, "\n");
+                game->player_one_ready = false;
+                game->player_two_ready = false;
+                write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                sleep(1);
+
+                write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                sleep(1);
+
+                write(game->player_one, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
+                write(game->player_two, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
+                sleep(1);
+
+                write(game->player_one, serveur_message, strlen(serveur_message));
+                write(game->player_two, serveur_message, strlen(serveur_message));
+            }
+        }
+    }
     return NULL;
 }
 int server()
@@ -220,7 +363,10 @@ int server()
 
     listen(server_socket, MAX_CLIENTS);
     client_len = sizeof(client_address);
-    // sprintf("Waiting for connections...\n");
+    pthread_t th;
+    if (pthread_create(&th, NULL, lunch_game, (void *)ALL_GAME) != 0)
+        error("ERROR on pthread_create");
+    pthread_detach(th);
     while (1)
     {
         client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_len);
@@ -234,7 +380,6 @@ int server()
         args->fd = fd;
         args->Chat = NULL;
         args->ALL_GAME = ALL_GAME;
-        add_player(ALL_GAME, client_socket);
 
         if (pthread_create(&thread_id, NULL, handle_connection, (void *)args) != 0)
             error("ERROR on pthread_create");
