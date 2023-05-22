@@ -117,7 +117,7 @@ char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
     char *line = get_random_line(dict, dict_size);
     for (int i = 0; i < num_lines; i++)
     {
-        printf("%s\n", line);
+
 
         // allocate a new string for the line and copy the line into it
         lines[i] = malloc((strlen(line) + 1) * sizeof(char)); // +1 for null terminator
