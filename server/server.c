@@ -195,7 +195,7 @@ void *worker_message(void *args)
     char buffer[BUFFER_SIZE] = {0};
     while ((read_size = recv(cfd, client_message, BUFFER_SIZE, 0)) > 0)
     {
-
+        bzero(buffer, BUFFER_SIZE);
         if (read_size == 0)
             break;
         strcpy(buffer, thread_args->Chat->name);
@@ -216,7 +216,7 @@ void *worker_message(void *args)
             set_ready(ALL_GAME, cfd, thread_args->Chat->name);
             continue;
         }
-        printf("%s\n", client_message);
+
         int e = write(second_cfd, buffer, strlen(buffer));
         if (e < 0)
         {
@@ -319,14 +319,13 @@ void *lunch_game(void *args)
                 strcat(serveur_message, "\n");
                 game->player_one_ready = false;
                 game->player_two_ready = false;
+                // write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                // write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                // sleep(1);
 
-                write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                sleep(1);
-
-                write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                sleep(1);
+                // write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                // write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                // sleep(1);
 
                 write(game->player_one, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
                 write(game->player_two, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
