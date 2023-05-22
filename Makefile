@@ -4,7 +4,7 @@ CPPFLAGS = -fsanitize=address -lncurses
 CFLAGS = -Wall -Wextra -std=c99
 
 
-SRC = ${wildcard *.c game/display/*.c } Chat/chat.c game/find_word/markov.c  Client/customer.c game/display/menu/ui.c
+SRC = ${wildcard *.c game/display/*.c } Chat/chat.c game/find_word/markov.c  Client/customer.c game/display/menu/ui.c main.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

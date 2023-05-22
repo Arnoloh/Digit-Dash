@@ -225,6 +225,8 @@ int run(Player* p, char** level, size_t n)
 
             if ((c == KEY_BACKSPACE || c == KEY_DC) && j > 0)
             {
+
+                
                 j--;
                 if (input[i][j] == level[i][j])
                     p->nb_correct--;

@@ -15,14 +15,14 @@
 #include "../game/display/player.h"
 #include "../game/find_word/markov.h"
 
-
 #define PORT 13080
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
 
-int u2u();
-
-struct message {
+int connect_to_server();
+char *u2u(int sockfd);
+struct message
+{
     int id;
     char *message;
     char *name;

@@ -1,5 +1,7 @@
 #include "ui.h"
 
+unsigned int level_seed;
+
 const char *boutons[NB_BOUTONS] = {
     "Entraînement",
     "Multijoueur",
@@ -12,9 +14,9 @@ void display_name(int largeur, int hauteur)
 {
 
     int nomJeuX = (largeur / 2) - 25; // Calcul de la position X pour centrer le texte "Digit Dash"
-    int nomJeuY = (hauteur - NB_BOUTONS ) / 2 - 10;
+    int nomJeuY = (hauteur - NB_BOUTONS) / 2 - 10;
 
-    mvprintw(nomJeuY, nomJeuX,     "  _____  _       _ _     _____            _        ");
+    mvprintw(nomJeuY, nomJeuX, "  _____  _       _ _     _____            _        ");
     mvprintw(nomJeuY + 1, nomJeuX, " |  __ \\(_)     (_) |   |  __ \\          | |     ");
     mvprintw(nomJeuY + 2, nomJeuX, " | |  | |_  __ _ _| |_  | |  | | __ _ ___| |__     ");
     mvprintw(nomJeuY + 3, nomJeuX, " | |  | | |/ _` | | __| | |  | |/ _` / __| '_ \\   ");
@@ -28,8 +30,8 @@ void display_menu(int largeur, int hauteur)
 {
     // Initialisation des couleurs
     init_pair(1, COLOR_WHITE, COLOR_MAGENTA); // Couleur du cadre
-    init_pair(2, COLOR_WHITE, COLOR_BLACK); // Couleur du texte
-    init_pair(3, COLOR_BLACK, COLOR_WHITE); // Couleur du bouton sélectionné
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);   // Couleur du texte
+    init_pair(3, COLOR_BLACK, COLOR_WHITE);   // Couleur du bouton sélectionné
 
     // Efface l'écran et met à jour l'affichage
     clear();
@@ -42,7 +44,7 @@ void display_menu(int largeur, int hauteur)
     display_name(largeur, hauteur);
 
     // Affichage des boutons
-    int x = (largeur - 12) / 2; // Position X des boutons pour les centrer
+    int x = (largeur - 12) / 2;         // Position X des boutons pour les centrer
     int y = (hauteur - NB_BOUTONS) / 2; // Position Y des boutons pour les centrer
 
     int choix = 0;
@@ -69,22 +71,22 @@ void display_menu(int largeur, int hauteur)
 
         switch (choix)
         {
-            case KEY_UP:
-                // Déplacement vers le bouton précédent
-                boutonSelectionne = (boutonSelectionne + NB_BOUTONS - 1) % NB_BOUTONS;
-                break;
-            case KEY_DOWN:
-                // Déplacement vers le bouton suivant
-                boutonSelectionne = (boutonSelectionne + 1) % NB_BOUTONS;
-                break;
-            case '\n':
-                // Action du bouton sélectionné
-                attron(COLOR_PAIR(2));
-                mvprintw(y + NB_BOUTONS + 2, x - 6, "Vous avez choisi %s", boutons[boutonSelectionne]);
-                attroff(COLOR_PAIR(2));
-                break;
+        case KEY_UP:
+            // Déplacement vers le bouton précédent
+            boutonSelectionne = (boutonSelectionne + NB_BOUTONS - 1) % NB_BOUTONS;
+            break;
+        case KEY_DOWN:
+            // Déplacement vers le bouton suivant
+            boutonSelectionne = (boutonSelectionne + 1) % NB_BOUTONS;
+            break;
+        case '\n':
+            // Action du bouton sélectionné
+            attron(COLOR_PAIR(2));
+            mvprintw(y + NB_BOUTONS + 2, x - 6, "Vous avez choisi %s", boutons[boutonSelectionne]);
+            attroff(COLOR_PAIR(2));
+            break;
         }
-        
+
         refresh();
 
         // Sortie de la boucle lorsque le bouton Quitter est sélectionné
@@ -102,8 +104,23 @@ void display_menu(int largeur, int hauteur)
     }
     else if (boutonSelectionne == 1)
     {
-        u2u();
-        display_menu(largeur, hauteur);
+        char *name;
+        int cfd = connect_to_server();
+    end_game:
+        name = u2u(cfd);
+        Player *player = new_player(name);
+        int dict_size = 0;
+        DictEntry *dict = generate_dict("game/find_word/database/c.txt", &dict_size);
+        if (!dict)
+        {
+            return; // Failed to generate the dictionary
+        }
+        srand(level_seed);
+        char **lines = generate_lines(dict, dict_size, 5);
+
+        run(player, lines, 5);
+        req = 1;
+        goto end_game;
     }
 }
 
