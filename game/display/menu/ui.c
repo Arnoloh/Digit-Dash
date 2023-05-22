@@ -1,7 +1,11 @@
 #include "ui.h"
 
 unsigned int level_seed;
-
+typedef struct WinCondition
+{
+    int sfd;
+    bool loosed;
+} WinCondition;
 const char *boutons[NB_BOUTONS] = {
     "Entraînement",
     "Multijoueur",
@@ -24,7 +28,32 @@ void display_name(int largeur, int hauteur)
     mvprintw(nomJeuY + 6, nomJeuX, "            __/ |                                  ");
     mvprintw(nomJeuY + 7, nomJeuX, "           |___/                                   ");
 }
+void *loose_or_win(void *args)
+{
+    WinCondition *info = args;
+    int sfd = info->sfd;
 
+    char buffer[BUFFER_SIZE] = {0};
+    while (1)
+    {
+        ssize_t received = read(sfd, buffer, BUFFER_SIZE);
+        write(sfd, buffer, strlen(buffer));
+        if (received <= 0)
+        {
+            perror("Error reading from server");
+            pthread_exit(NULL);
+            return NULL;
+        }
+        if (strstr(buffer, "STOP") != NULL)
+        {
+
+            info->loosed = true;
+            pthread_exit(NULL);
+            return NULL;
+        }
+    }
+    return NULL;
+}
 void display_menu(int largeur, int hauteur)
 {
     // Initialisation des couleurs
@@ -107,9 +136,12 @@ void display_menu(int largeur, int hauteur)
         bool named = false;
         int cfd = connect_to_server();
         unsigned int level_seed;
+
     end_game:
         name = u2u(cfd, named, &level_seed);
-    
+        WinCondition info = {cfd, false};
+        pthread_t th;
+
         named = true;
         Player *player = new_player(name);
         int dict_size = 0;
@@ -121,13 +153,23 @@ void display_menu(int largeur, int hauteur)
 
         int progress = 0;
         srand(level_seed);
-        while (progress < 200)
+        if (pthread_create(&th, NULL, loose_or_win, (void *)&info) != 0)
         {
+            perror("Error creating read thread");
+            return;
+        }
+        while (progress < 200 && info.loosed != true)
+        {
+
             char **lines = generate_lines(dict, dict_size, 5);
             progress = run(player, lines, 5, progress);
         }
         req = 1;
-
+        if (info.loosed == false)
+        {
+            write(cfd, "STOP", strlen("STOP"));
+        }
+        pthread_join(th, NULL);
         goto end_game;
     }
     else if (boutonSelectionne == 2)

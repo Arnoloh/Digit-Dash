@@ -188,14 +188,14 @@ void *worker_message(void *args)
     int cfd = thread_args->client_socket;
     FILE *fd = thread_args->fd;
     Game *ALL_GAME = thread_args->ALL_GAME;
-    char client_message[BUFFER_SIZE];
+    char client_message[BUFFER_SIZE] = {0};
     int read_size;
     int second_cfd = find_fd(ALL_GAME, cfd);
 
     char buffer[BUFFER_SIZE] = {0};
     while ((read_size = recv(cfd, client_message, BUFFER_SIZE, 0)) > 0)
     {
-        bzero(buffer, BUFFER_SIZE);
+
         if (read_size == 0)
             break;
         strcpy(buffer, thread_args->Chat->name);
@@ -216,7 +216,7 @@ void *worker_message(void *args)
             set_ready(ALL_GAME, cfd, thread_args->Chat->name);
             continue;
         }
-
+      
         int e = write(second_cfd, buffer, strlen(buffer));
         if (e < 0)
         {
@@ -224,6 +224,7 @@ void *worker_message(void *args)
             continue;
         }
         bzero(client_message, BUFFER_SIZE);
+        bzero(buffer, BUFFER_SIZE);
     }
 
     close(cfd);
@@ -305,7 +306,7 @@ void *lunch_game(void *args)
         for (size_t i = 0; i < INITIAL; i++)
         {
             Game *game = &ALL_GAME[i];
-            if (game->player_one_ready && game->player_two_ready)
+            if (game->player_one_ready || game->player_two_ready)
             {
                 int seed = generate_seed();
                 char *seed_str = int_to_string(seed);
@@ -319,13 +320,13 @@ void *lunch_game(void *args)
                 strcat(serveur_message, "\n");
                 game->player_one_ready = false;
                 game->player_two_ready = false;
-                write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
-                sleep(1);
+                // write(game->player_one, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                // write(game->player_two, "Server: Game start in 3\n", strlen("Server: Game start in 3\n"));
+                // sleep(1);
 
-                write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
-                sleep(1);
+                // write(game->player_one, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                // write(game->player_two, "Server: Game start in 2\n", strlen("Server: Game start in 2\n"));
+                // sleep(1);
 
                 write(game->player_one, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));
                 write(game->player_two, "Server: Game start in 1\n", strlen("Server: Game start in 1\n"));

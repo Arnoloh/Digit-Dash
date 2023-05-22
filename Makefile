@@ -1,5 +1,5 @@
 #Makefile
-CC = gcc -g -w
+CC = gcc -g 
 CPPFLAGS = -fsanitize=address -lncurses
 CFLAGS = -Wall -Wextra -std=c99
 
