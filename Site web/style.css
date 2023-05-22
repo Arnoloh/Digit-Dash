@@ -19,6 +19,9 @@ body{
 .container-fluid{
     margin-top: 3%;
 }
+.descend{
+    width: 85%;
+}
 header{
     position: fixed;
     top: 0%;
@@ -67,6 +70,9 @@ margin-bottom:20px;}
 .navbar li{
     list-style: none;
     
+}
+.brrr{
+    margin-top: 5%;
 }
 .jj{
     background: white;
@@ -328,12 +334,12 @@ header.sticky{
     align-items: center;
 }
 .mas{
-    margin-top:350px;
+    margin-top:150px;
     color:white;
     font-weight:bold;
     font-size:200%;
     font-family: "Courier", Times, serif;
-    
+    margin-bottom: 50px;
 }
 .first{
     margin-top:150px;
