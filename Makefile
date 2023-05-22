@@ -19,4 +19,4 @@ digit-dash: ${OBJ}
 .PHONY: all clean
 
 clean:
-	${RM} -r  ${OBJ} ${DEP} main
+	${RM} -r  ${OBJ} ${DEP} digit-dash
