@@ -15,41 +15,47 @@ void *read_from_server(void *arg)
     end_game:
     while (1)
     {
-        ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
-        if (received <= 0)
+        while(req != 0)
         {
-            perror("Error reading from server");
-            break;
-        }
-        buffer[received] = '\0';
-        req = detectRequest(buffer);
-        stockRequest(buffer, req);
-        int i =0;
-        while(i<20 && buffer[i] != '\0')
-        {
-            if (buffer[i] == ':')
+            ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+            if (received <= 0)
             {
-               i=14;
-               wattron(message_win, COLOR_PAIR(2));
-               break; 
+                perror("Error reading from server");
+                break;
             }
-            
-            ++i;
+            buffer[received] = '\0';
+            req = detectRequest(buffer);
+            stockRequest(buffer, req);
+            int i =0;
+            while(i<20 && buffer[i] != '\0')
+            {
+                if (buffer[i] == ':')
+                {
+                i=14;
+                wattron(message_win, COLOR_PAIR(2));
+                break; 
+                }
+                
+                ++i;
+            }
+            pthread_mutex_lock(&lock);
+            if (i !=14)
+            {
+                wattron(message_win, COLOR_PAIR(4)); 
+            }
+            wprintw(message_win, "%s\n", buffer);
+            wattroff(message_win, COLOR_PAIR(2));
+            wattroff(message_win, COLOR_PAIR(4));  // Remove color
+            wrefresh(message_win);
+            pthread_mutex_unlock(&lock);
         }
-        pthread_mutex_lock(&lock);
-        if (i !=14)
-        {
-            wattron(message_win, COLOR_PAIR(4)); 
-        }
-        wprintw(message_win, "%s\n", buffer);
-        wattroff(message_win, COLOR_PAIR(2));
-        wattroff(message_win, COLOR_PAIR(4));  // Remove color
-        wrefresh(message_win);
-        pthread_mutex_unlock(&lock);
+
         if(req == 0)
         {
         	strcpy(buffer_seed, buffer);
-        	break;
+              pthread_exit(NULL);
+    return NULL; 
+
         }
     }
 
@@ -57,7 +63,7 @@ void *read_from_server(void *arg)
     Player* player = new_player(name);
 	int dict_size = 0;
 	level_seed = __atoi(buffer_seed);
-	DictEntry *dict = generate_dict("../game/find_word/database/c.txt", &dict_size);
+    DictEntry *dict = generate_dict("game/find_word/database/c.txt", &dict_size);
 	if (!dict) {
 		return NULL; // Failed to generate the dictionary
 	}
@@ -66,8 +72,9 @@ void *read_from_server(void *arg)
     run(player, lines, 5);
     req = 1;
     goto end_game;
-
+ pthread_exit(NULL);
     return NULL;
+    
 }
 
 void *write_to_server(void *arg)
@@ -98,8 +105,15 @@ void *write_to_server(void *arg)
         wattroff(message_win, COLOR_PAIR(1));
         wrefresh(message_win);
         pthread_mutex_unlock(&lock);
-    }
 
+        if(req == 0)
+            {
+                 
+                pthread_exit(NULL);
+    return NULL;
+            }
+    }
+    pthread_exit(NULL);
     return NULL;
 }
 
@@ -194,11 +208,11 @@ int u2u()
 
     pthread_join(read_thread, NULL);
     pthread_join(write_thread, NULL);
-
+    printf("thread done\n");
     close(sockfd);
 
     // End of ncurses session
     endwin();
 
-    return 0;
+    return sockfd;
 }

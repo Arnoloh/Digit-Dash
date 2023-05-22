@@ -98,14 +98,13 @@ void display_menu(int largeur, int hauteur)
     if (boutonSelectionne == 0)
     {
         start();
-        
+        display_menu(largeur, hauteur);
     }
     else if (boutonSelectionne == 1)
     {
         u2u();
+        display_menu(largeur, hauteur);
     }
-
-    display_menu(largeur, hauteur);
 }
 
 void menu()
