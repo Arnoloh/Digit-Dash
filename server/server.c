@@ -210,8 +210,8 @@ void *worker_message(void *args)
             write(cfd, "Server: No one is connected.\n", strlen("Server: No one is connected.\n"));
             continue;
         }
-        printf("%s\n", client_message);
-        if (strcmp(client_message, "ready\n") == 0)
+
+        if (strcmp(client_message, "ready") == 0)
         {
             set_ready(ALL_GAME, cfd, thread_args->Chat->name);
             continue;
