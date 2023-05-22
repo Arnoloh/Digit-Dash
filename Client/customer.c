@@ -111,6 +111,16 @@ long __atoi(char message[])
 	return number;
 }
 
+char* SendGameStats(Player* player)
+
+{
+	Generic gen = {Player ,Player};
+	player->info=gen;
+	char* stats = serialize((Generic *) player);
+
+	return stats;
+}
+
 void MainMenu()
 {
 	char message[BUFFER_SIZE] = {0};

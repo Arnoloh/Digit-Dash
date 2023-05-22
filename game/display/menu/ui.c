@@ -5,7 +5,6 @@ unsigned int level_seed;
 const char *boutons[NB_BOUTONS] = {
     "Entraînement",
     "Multijoueur",
-    "Chat",
     "Aide",
     "Quitter",
 };
@@ -122,6 +121,16 @@ void display_menu(int largeur, int hauteur)
 
         run(player, lines, 5);
         req = 1;
+        player->running = 0;
+
+        char* stats = SendGameStats(player);
+
+        ssize_t sent = send(cfd, stats, strlen(stats), 0);
+        if (sent < 0)
+        {
+            perror("Error writing to server");
+        }
+
         goto end_game;
     }
 }

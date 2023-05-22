@@ -18,10 +18,12 @@ enum colors {
 };
 
 typedef struct Player {
+    Generic info;
     char*   name;
     size_t  nb_correct;
     size_t  nb_error;
     int     malus;
+    int     running;
 } Player ;
 
 #include "gameUI.h"

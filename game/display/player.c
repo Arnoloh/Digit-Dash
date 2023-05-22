@@ -8,6 +8,7 @@ Player* new_player(char* name)
     p->nb_correct = 0;
     p->nb_error = 0;
     p->malus = 0;
+    p->running = 1;
 
     return p;
 }

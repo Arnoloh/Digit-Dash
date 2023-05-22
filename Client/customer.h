@@ -14,6 +14,10 @@
 #include <pthread.h>
 
 #include "../Chat/chat.h"
+#include "../tools/tools.h"
+#include "../game/display/player.h"
+#include "../tools/tools.h"
+
 extern unsigned int level_seed;
 void help();
 void client();
@@ -22,6 +26,7 @@ void MainMenu();
 void query(char message[]);
 long __atoi(char message[]);
 int detectRequest(char message[]);
+char* SendGameStats(Player* player);
 void stockRequest(char message[], int req);
 void rewrite(int fd, const void *buf, size_t count);
 

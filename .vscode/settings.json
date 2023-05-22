@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "player.h": "c",
+        "markov.h": "c",
+        "chat.h": "c",
+        "customer.h": "c",
+        "game.h": "c",
+        "gameui.h": "c",
+        "ncurses.h": "c",
+        "ui.h": "c"
+    }
+}
