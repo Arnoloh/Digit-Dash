@@ -122,7 +122,7 @@ int connect_to_server()
 
     return sockfd;
 }
-char *u2u(int sockfd, char *name)
+char *u2u(int sockfd, bool name_already)
 {
     // Initialization of ncurses
     initscr();
@@ -158,9 +158,9 @@ char *u2u(int sockfd, char *name)
     input_win = derwin(input_win_border, 1, max_x - 2, 1, 1);
 
     // Socket setup and connection
-    if (name == NULL)
+    char buffer[BUFFER_SIZE];
+    if (name_already == false)
     {
-        char buffer[BUFFER_SIZE];
         ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
         if (received > 0)
         {
