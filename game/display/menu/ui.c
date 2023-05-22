@@ -104,10 +104,10 @@ void display_menu(int largeur, int hauteur)
     }
     else if (boutonSelectionne == 1)
     {
-        char *name;
+        char *name = NULL;
         int cfd = connect_to_server();
     end_game:
-        name = u2u(cfd);
+        name = u2u(cfd, name);
         Player *player = new_player(name);
         int dict_size = 0;
         DictEntry *dict = generate_dict("game/find_word/database/c.txt", &dict_size);

@@ -122,7 +122,7 @@ int connect_to_server()
 
     return sockfd;
 }
-char *u2u(int sockfd)
+char *u2u(int sockfd, char *name)
 {
     // Initialization of ncurses
     initscr();
@@ -158,22 +158,25 @@ char *u2u(int sockfd)
     input_win = derwin(input_win_border, 1, max_x - 2, 1, 1);
 
     // Socket setup and connection
-    char buffer[BUFFER_SIZE];
-    ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
-    if (received > 0)
+    if (name == NULL)
     {
-        buffer[received] = '\0';
-        wprintw(message_win, "%s\n", buffer);
-        wrefresh(message_win);
-
-        echo();
-        wgetstr(input_win, name);
-        noecho();
-
-        ssize_t sent = send(sockfd, name, strlen(name), 0);
-        if (sent < 0)
+        char buffer[BUFFER_SIZE];
+        ssize_t received = recv(sockfd, buffer, BUFFER_SIZE, 0);
+        if (received > 0)
         {
-            perror("Error writing to server");
+            buffer[received] = '\0';
+            wprintw(message_win, "%s\n", buffer);
+            wrefresh(message_win);
+
+            echo();
+            wgetstr(input_win, name);
+            noecho();
+
+            ssize_t sent = send(sockfd, name, strlen(name), 0);
+            if (sent < 0)
+            {
+                perror("Error writing to server");
+            }
         }
     }
     pthread_t read_thread, write_thread;

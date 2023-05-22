@@ -20,7 +20,7 @@
 #define BUFFER_SIZE 256
 
 int connect_to_server();
-char *u2u(int sockfd);
+char *u2u(int sockfd, char *name);
 struct message
 {
     int id;
