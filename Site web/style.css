@@ -341,6 +341,17 @@ header.sticky{
     font-family: "Courier", Times, serif;
     margin-bottom: 50px;
 }
+.tit{
+    font-weight: bold;
+    font-size: 170%;
+}
+.game{
+    margin-top:150px;
+    color:white;
+    font-size:150%;
+    font-family: "Courier", Times, serif;
+    margin-bottom: 50px;
+}
 .first{
     margin-top:150px;
 }
