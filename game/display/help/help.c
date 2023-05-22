@@ -33,13 +33,19 @@ void display_help()
     
 
     // Grande box à gauche
-    WINDOW *leftbox = subwin(mainwin, height - 40, width / 2 - 2, 9, 1);
+    WINDOW *leftbox = subwin(mainwin, height - 10, width / 2 - 2, 9, 1);
     //wbkgd(leftbox, COLOR_PAIR(20));
     box(leftbox, 0, 0);
     mvwprintw(leftbox, 0, 2, "[ The game ]");
     mvwprintw(leftbox, 2, 2, "Welcome to Digit Chat, the ultimate typing game for hardcore coders!");
     mvwprintw(leftbox, 3, 2, "In this thrilling game, your objective is to type lines of code");
     mvwprintw(leftbox, 4, 2, "faster than your opponent to achieve victory. The brief description");
+
+    mvwprintw(leftbox, 8, 2, " How to play multiplayer ?");
+    mvwprintw(leftbox, 9, 2, "Select multiplayer in menu.");
+    mvwprintw(leftbox, 10, 2, "A chat box will appear, wait for another player.");
+    mvwprintw(leftbox, 11, 2, "When two players are present, type \"ready\" in the chat.");
+    mvwprintw(leftbox, 12, 2, "When both players are ready the game starts automatically.");
 
     // Dernière box avec les statistiques
     WINDOW *statsbox = subwin(mainwin, height - 10, width / 2, 9, width / 2 - 1);
@@ -64,16 +70,6 @@ void display_help()
     //wbkgd(progressbar, COLOR_PAIR(20));
     box(escape, 0, 0);
     mvwprintw(escape, 1, 1, " Press escape to return to the menu");
-
-    // Petite box avec barre de progression
-    WINDOW *help = subwin(mainwin, 10, width / 2 - 2, height - 31, 1);
-    //wbkgd(progressbar, COLOR_PAIR(20));
-    box(help, 0, 0);
-    mvwprintw(help, 0, 2, "[ How to play multiplayer ]");
-    mvwprintw(help, 3, 2, "Select multiplayer in menu.");
-    mvwprintw(help, 4, 2, "A chat box will appear, wait for another player.");
-    mvwprintw(help, 5, 2, "When two players are present, type \"ready\" in the chat.");
-    mvwprintw(help, 6, 2, "When both players are ready the game starts automatically.");
 
 
     // Affiche le nom du jeu
