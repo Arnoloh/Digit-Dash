@@ -40,6 +40,8 @@ void help()
 	rewrite(STDOUT_FILENO, "[aide]   --- Permet de connaître les options disponibles\n\n", strlen("[aide]   --- Permet de connaître les options disponibles\n\n"));
 }
 
+
+
 int detectServer(char message[])
 {
 	char tmp[BUFFER_SIZE] = {0};
@@ -111,15 +113,7 @@ long __atoi(char message[])
 	return number;
 }
 
-char* SendGameStats(Player* player)
 
-{
-	Generic gen = {Player ,Player};
-	player->info=gen;
-	char* stats = serialize((Generic *) player);
-
-	return stats;
-}
 
 void MainMenu()
 {

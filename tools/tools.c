@@ -1,7 +1,7 @@
 #include "tools.h"
 
-
-typedef struct{
+typedef struct
+{
     Generic info;
     char test;
     int in_info;
@@ -9,23 +9,24 @@ typedef struct{
 
 char *serialize(Generic *buf)
 {
-    switch (buf->type){
-        case Game_info:
-            {
-                info_game *game = (info_game *) buf;
-                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1));
-                snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1), "%i,%c,%i", game->info.id, game->test, game->in_info); 
-                return str;
-            }
-        case Chat:
-            {
-                Chat_info *game = (Chat_info *) buf;
-                char* str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name) + 1));
-                snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name) + 1), "%i,\"%s\",\"%s\"", game->info.id, game->Message,game->name); 
-                return str;
-            }
-        default:
-            return NULL;
+    switch (buf->type)
+    {
+    case Player_Info:
+    {
+        info_game *game = (info_game *)buf;
+        char *str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1));
+        snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,%c,%i", game->info.id, game->test, game->in_info) + 1), "%i,%c,%i", game->info.id, game->test, game->in_info);
+        return str;
+    }
+    case Chat:
+    {
+        Chat_info *game = (Chat_info *)buf;
+        char *str = malloc(sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message, game->name) + 1));
+        snprintf(str, sizeof(char) * (snprintf(NULL, 0, "%i,\"%s\",\"%s\"", game->info.id, game->Message, game->name) + 1), "%i,\"%s\",\"%s\"", game->info.id, game->Message, game->name);
+        return str;
+    }
+    default:
+        return NULL;
     }
 }
 
@@ -35,16 +36,7 @@ Generic *deserialize(const char *str)
 
     type_id = str[0] - '0';
 
-    if (type_id == 0) // info_game
-    {
-        info_game *game = malloc(sizeof(info_game));
-        sscanf(str, "%d,%c,%i", &game->info.id, &game->test, &game->in_info);
-
-        game->info.type = Game_info;
-
-        return (Generic *)game;
-    }
-    else if (type_id == 1) // Chat_info
+    if (type_id == 1) // Chat_info
     {
         Chat_info *chat = malloc(sizeof(Chat_info));
 
@@ -56,8 +48,6 @@ Generic *deserialize(const char *str)
         chat->info.type = Chat;
 
         return (Generic *)chat;
-        
-        
     }
     else
     {
@@ -94,4 +84,3 @@ Generic *deserialize(const char *str)
 
 //     return 0;
 // }
-

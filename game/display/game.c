@@ -23,19 +23,10 @@ void start(void)
     size_t n = 10;
     char** level = malloc(sizeof(char*) * n);
 
-    for (size_t i = 0 ; i < n ; i++)    
-    {
-        level[i] = malloc(sizeof(char) * 36);
-
-        for (size_t j = 0 ; j < 35 ; j++)
-            level[i][j] = 'a';
-        
-        level[i][35] = '\0';
-    }
 
     Game* game = init_game("Ethan", "Jessy");
 
-    run(game->player_1, level, n);
+    // run(game->player_1, level, n,);
 
     free(game->player_1);
     free(game->player_2);

@@ -6,7 +6,7 @@
 #define MAX_STRING_LENGTH 1024
 enum TYPE
 {
-    Game_info,
+    Player_Info,
     Chat,
 };
 typedef struct

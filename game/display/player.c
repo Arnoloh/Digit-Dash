@@ -1,8 +1,8 @@
 #include "player.h"
 
-Player* new_player(char* name)
+Player *new_player(char *name)
 {
-    Player* p = malloc(sizeof(Player));
+    Player *p = malloc(sizeof(Player));
 
     p->name = name;
     p->nb_correct = 0;
@@ -13,7 +13,7 @@ Player* new_player(char* name)
     return p;
 }
 
-void display_stat(WINDOW* frame, Player* p)
+void display_stat(WINDOW *frame, Player *p)
 {
     // Titre
     mvwprintw(frame, 0, 2, "[ %s's statistics ]", p->name);
@@ -34,23 +34,23 @@ void display_stat(WINDOW* frame, Player* p)
 /**
   \brief Get char one by one in the standart input.
 */
-int get_ch(void) 
+int get_ch(void)
 {
     int ch;
     struct termios oldt;
     struct termios newt;
 
     // Store old settings.
-    tcgetattr(STDIN_FILENO, &oldt); 
+    tcgetattr(STDIN_FILENO, &oldt);
 
     // Copy old settings to new settings.
-    newt = oldt; 
-    
+    newt = oldt;
+
     // Make one change to old settings in new settings.
-    newt.c_lflag &= ~(ICANON | ECHO); 
+    newt.c_lflag &= ~(ICANON | ECHO);
 
     // Apply the new settings immediatly.
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     // Standard getchar call.
     ch = getchar();
@@ -62,10 +62,10 @@ int get_ch(void)
     return ch;
 }
 
-void free_input(char** input, size_t n)
+void free_input(char **input, size_t n)
 {
     // Free each line.
-    for (size_t i = 0 ; i < n ; i++)
+    for (size_t i = 0; i < n; i++)
     {
         free(input[i]);
     }
@@ -74,9 +74,9 @@ void free_input(char** input, size_t n)
     free(input);
 }
 
-void free_window(WINDOW** w)
+void free_window(WINDOW **w)
 {
-    for (size_t i = 0 ; i < 4 ; i++)
+    for (size_t i = 0; i < 4; i++)
     {
         delwin(w[i]);
     }
@@ -84,8 +84,7 @@ void free_window(WINDOW** w)
     free(w);
 }
 
-
-void display(WINDOW* frame, char** input, char** level, size_t len)
+void display(WINDOW *frame, char **input, char **level, size_t len)
 {
     init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);
     init_pair(RED, COLOR_RED, COLOR_BLACK);
@@ -95,7 +94,7 @@ void display(WINDOW* frame, char** input, char** level, size_t len)
     {
         size_t j = 0;
 
-        wmove(frame, i + 2 , 2);
+        wmove(frame, i + 2, 2);
 
         while (input[i][j] != '\0')
         {
@@ -120,7 +119,6 @@ void display(WINDOW* frame, char** input, char** level, size_t len)
                 wattroff(frame, COLOR_PAIR(GREEN));
             }
 
-            
             // Go to the next character.
             j++;
         }
@@ -142,11 +140,11 @@ void display(WINDOW* frame, char** input, char** level, size_t len)
 /**
   \brief Get size of the game.
   */
-size_t get_size(char** level, size_t len)
+size_t get_size(char **level, size_t len)
 {
     size_t n = 0;
 
-    for (size_t i = 0 ; i < len ; i++)
+    for (size_t i = 0; i < len; i++)
     {
         n += strlen(level[i]);
     }
@@ -154,19 +152,21 @@ size_t get_size(char** level, size_t len)
     return n;
 }
 
-
-void progress_bar(WINDOW* frame, size_t level_len, size_t input_len)
+void progress_bar(WINDOW *frame, size_t input_len)
 {
-    int height, width;   
+    int height, width;
     getmaxyx(frame, height, width);
     init_pair(21, COLOR_MAGENTA, COLOR_MAGENTA);
     init_pair(22, COLOR_WHITE, COLOR_WHITE);
 
     wmove(frame, 0, 2);
-    
-    size_t percentage = (input_len * 100) / level_len;
 
-    int to_write = (percentage * (width-4)) / 100 ;
+    size_t total_progress = 200;
+    size_t percentage = (input_len * 100) / total_progress;
+    if (percentage >= 100)
+        percentage = 100;
+    int to_write = (percentage * (width - 4)) / 100;
+
     int space = width - 4 - to_write;
 
     wprintw(frame, "[ Game progression | (200 char) | %lu%% ]", percentage);
@@ -191,10 +191,10 @@ void progress_bar(WINDOW* frame, size_t level_len, size_t input_len)
     wrefresh(frame);
 }
 
-
-int run(Player* p, char** level, size_t n)
+int run(Player *p, char **level, size_t n, int progress)
 {
-    char** input = malloc(sizeof(char*) * n);
+    
+    char **input = malloc(sizeof(char *) * n);
 
     for (size_t i = 0; i < n; i++)
     {
@@ -203,19 +203,17 @@ int run(Player* p, char** level, size_t n)
         input[i][0] = '\0';
     }
 
-    size_t level_len = get_size(level, n);
-
     refresh();
 
-    WINDOW** all_win = malloc(sizeof(WINDOW*) * 4);
+    WINDOW **all_win = malloc(sizeof(WINDOW *) * 4);
 
+    int input_len = 0;
     display_win(all_win);
-    progress_bar(all_win[2], level_len, 0);
+    progress_bar(all_win[2], progress);
     display_stat(all_win[3], p);
     display(all_win[1], input, level, n);
 
     size_t i = 0;
-
     while (i < n)
     {
         size_t j = 0;
@@ -227,13 +225,12 @@ int run(Player* p, char** level, size_t n)
             if ((c == KEY_BACKSPACE || c == KEY_DC) && j > 0)
             {
 
-                
                 j--;
                 if (input[i][j] == level[i][j])
                     p->nb_correct--;
                 else
                     p->nb_error--;
-                
+
                 input[i][j] = '\0';
             }
             else if (c != KEY_BACKSPACE && c != KEY_DC)
@@ -244,15 +241,15 @@ int run(Player* p, char** level, size_t n)
                     p->nb_error++;
 
                 input[i][j] = c;
-                input[i][j+1] = '\0';
+                input[i][j + 1] = '\0';
                 j++;
             }
 
-            size_t input_len = get_size(input, n);
-            
-            progress_bar(all_win[2], level_len, input_len);
+            input_len = get_size(input, n);
+
+            progress_bar(all_win[2], input_len + progress);
             display_stat(all_win[3], p);
-            display(all_win[1], input, level, n); 
+            display(all_win[1], input, level, n);
         }
 
         p->malus = p->nb_correct / MALUS_THREESHOLD;
@@ -262,5 +259,5 @@ int run(Player* p, char** level, size_t n)
     free_input(input, n);
     free_window(all_win);
 
-    return 1;
+    return input_len + progress;
 }

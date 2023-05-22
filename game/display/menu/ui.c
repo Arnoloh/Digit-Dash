@@ -24,7 +24,26 @@ void display_name(int largeur, int hauteur)
     mvprintw(nomJeuY + 6, nomJeuX, "            __/ |                                  ");
     mvprintw(nomJeuY + 7, nomJeuX, "           |___/                                   ");
 }
+char *int_to_string(int num)
+{
+    // Determine the length of the integer string representation
+    int length = snprintf(NULL, 0, "%d", num);
 
+    // Allocate memory for the string (including the null-terminator)
+    char *str = (char *)malloc(length + 1);
+
+    // Check if the memory allocation was successful
+    if (!str)
+    {
+        fprintf(stderr, "Memory allocation error!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Convert the integer to a string using sprintf
+    sprintf(str, "%d", num);
+
+    return str;
+}
 void display_menu(int largeur, int hauteur)
 {
     // Initialisation des couleurs
@@ -106,8 +125,11 @@ void display_menu(int largeur, int hauteur)
         char *name;
         bool named = false;
         int cfd = connect_to_server();
+        unsigned int level_seed;
     end_game:
-        name = u2u(cfd, named);
+        name = u2u(cfd, named, &level_seed);
+        char *string = int_to_string(level_seed);
+        write(cfd, string, strlen(string));
         named = true;
         Player *player = new_player(name);
         int dict_size = 0;
@@ -116,20 +138,15 @@ void display_menu(int largeur, int hauteur)
         {
             return; // Failed to generate the dictionary
         }
+
+        int progress = 0;
         srand(level_seed);
-        char **lines = generate_lines(dict, dict_size, 5);
-
-        run(player, lines, 5);
-        req = 1;
-        player->running = 0;
-
-        char* stats = SendGameStats(player);
-
-        ssize_t sent = send(cfd, stats, strlen(stats), 0);
-        if (sent < 0)
+        while (progress < 200)
         {
-            perror("Error writing to server");
+            char **lines = generate_lines(dict, dict_size, 5, level_seed);
+            progress = run(player, lines, 5, progress);
         }
+        req = 1;
 
         goto end_game;
     }

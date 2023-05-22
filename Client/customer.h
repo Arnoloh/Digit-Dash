@@ -26,7 +26,6 @@ void MainMenu();
 void query(char message[]);
 long __atoi(char message[]);
 int detectRequest(char message[]);
-char* SendGameStats(Player* player);
 void stockRequest(char message[], int req);
 void rewrite(int fd, const void *buf, size_t count);
 

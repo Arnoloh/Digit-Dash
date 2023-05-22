@@ -1,6 +1,5 @@
 #include "markov.h"
 
-
 // delete begin spaces
 char *trim_leading_spaces(char *str)
 {
@@ -111,8 +110,9 @@ char *get_next_line(DictEntry *dict, int dict_size, char *line)
 
 // Generate lines of text from the dictionary
 // Generate lines of text from the dictionary and return them as an array of strings
-char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
+char **generate_lines(DictEntry *dict, int dict_size, int num_lines, int level_seed)
 {
+    srand(level_seed);
     char **lines = malloc(num_lines * sizeof(char *));
     char *line = get_random_line(dict, dict_size);
     for (int i = 0; i < num_lines; i++)
@@ -128,10 +128,11 @@ char **generate_lines(DictEntry *dict, int dict_size, int num_lines)
     return lines;
 }
 
-DictEntry *generate_dict(const char *file_path, int *dict_size) 
+DictEntry *generate_dict(const char *file_path, int *dict_size)
 {
     FILE *file = fopen(file_path, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         printf("Could not open file.\n");
         return NULL;
     }
@@ -141,7 +142,7 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     char *line = NULL, *next_line = NULL;
     size_t len = 0;
 
-    if (getline(&line, &len, file) == -1) 
+    if (getline(&line, &len, file) == -1)
     {
         printf("File is empty.\n");
         return NULL;
@@ -152,7 +153,7 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     line = trim_leading_spaces(line);
     trim_trailing_spaces(line);
 
-    while (getline(&next_line, &len, file) != -1) 
+    while (getline(&next_line, &len, file) != -1)
     {
         // remove trailing newline character
         next_line[strcspn(next_line, "\n")] = 0;
@@ -171,12 +172,12 @@ DictEntry *generate_dict(const char *file_path, int *dict_size)
     return dict;
 }
 
-/*int main() 
+/*int main()
 {
     int dict_size = 0;
     DictEntry *dict = generate_dict("database.txt", &dict_size);
 
-    if (!dict) 
+    if (!dict)
     {
          return 1; // Failed to generate the dictionary
     }

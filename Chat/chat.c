@@ -122,7 +122,7 @@ int connect_to_server()
 
     return sockfd;
 }
-char *u2u(int sockfd, bool name_already)
+char *u2u(int sockfd, bool name_already,unsigned int *level_seed)
 {
     // Initialization of ncurses
     initscr();
@@ -197,7 +197,8 @@ char *u2u(int sockfd, bool name_already)
     pthread_cancel(write_thread);
     write(sockfd, buffer_seed, strlen(buffer_seed));
     // lancement
-    level_seed = __atoi(buffer_seed);
+    *level_seed = atoi(buffer_seed);
+
 
     // End of ncurses session
     delwin(message_win);
