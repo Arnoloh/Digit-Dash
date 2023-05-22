@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "customer.h"
 
-int main()
+/*int main()
 {   
     MainMenu();
     return 0;
-}
+}*/

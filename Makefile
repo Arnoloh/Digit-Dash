@@ -4,19 +4,19 @@ CPPFLAGS = -fsanitize=address -lncurses
 CFLAGS = -Wall -Wextra -std=c99
 
 
-SRC = ${wildcard */*.c *.c} ../../Chat/chat.c ../find_word/markov.c ../../Client/customer.c
+SRC = ${wildcard *.c game/display/*.c } Chat/chat.c game/find_word/markov.c  Client/customer.c game/display/menu/ui.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-all: test
+all: main
 
 -include ${DEP}
 
-test: ${OBJ}
+main: ${OBJ}
 	$(CC) ${CFLAGS} ${CPPFLAGS} $^ -o $@
 	
 
 .PHONY: all clean
 
 clean:
-	${RM} -r  ${OBJ} ${DEP} test
+	${RM} -r  ${OBJ} ${DEP} main

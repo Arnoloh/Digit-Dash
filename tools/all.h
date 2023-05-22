@@ -10,20 +10,13 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <ncurses.h>
-
-#include "../Client/customer.h"
-#include "../game/display/player.h"
-#include "../game/find_word/markov.h"
-
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <string.h>
 
 #define PORT 13080
 #define IP "82.65.173.135"
 #define BUFFER_SIZE 256
-
-int u2u();
-
-struct message {
-    int id;
-    char *message;
-    char *name;
-};
+#define _GNU_SOURCE

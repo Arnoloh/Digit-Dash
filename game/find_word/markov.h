@@ -18,6 +18,6 @@ typedef struct
     int count;
 } DictEntry;
 
-unsigned int seed;
+
 DictEntry *generate_dict(const char *file_path, int *dict_size);
 char **generate_lines(DictEntry *dict, int dict_size, int num_lines);

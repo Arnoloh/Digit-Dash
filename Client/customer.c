@@ -1,20 +1,5 @@
-#define _GNU_SOURCE
+#include "customer.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <err.h>
-#include <unistd.h>
-#include <pthread.h>
-
-#include "../Chat/chat.h"
-
-#define BUFFER_SIZE 512
 
 
 void rewrite(int fd, const void *buf, size_t count)

@@ -1,15 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <pthread.h>
-#include <ncurses.h>
-#include "../Client/customer.h"
-#include "../game/display/player.h"
-#define PORT 13080
-#define IP "82.65.173.135"
-#define BUFFER_SIZE 256
+#include "chat.h"
+
+unsigned int level_seed;
 
 char buffer_seed[BUFFER_SIZE];
 int req = 10;
@@ -65,12 +56,12 @@ void *read_from_server(void *arg)
         //Lancement de la partie
     Player* player = new_player(name);
 	int dict_size = 0;
-	seed = __atoi(buffer_seed);
+	level_seed = __atoi(buffer_seed);
 	DictEntry *dict = generate_dict("../game/find_word/database/c.txt", &dict_size);
 	if (!dict) {
 		return NULL; // Failed to generate the dictionary
 	}
-	srand(seed);
+	srand(level_seed);
 	char **lines = generate_lines(dict, dict_size, 5);
     run(player, lines, 5);
     req = 1;
