@@ -16,7 +16,7 @@
 #include "../game/find_word/markov.h"
 
 #define PORT 13080
-#define IP "127.0.0.1"
+#define IP "82.65.173.135"
 #define BUFFER_SIZE 256
 
 int connect_to_server();
