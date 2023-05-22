@@ -1,5 +1,5 @@
 #Makefile
-CC = gcc -g
+CC = gcc -g -w
 CPPFLAGS = -fsanitize=address -lncurses
 CFLAGS = -Wall -Wextra -std=c99
 
@@ -8,11 +8,11 @@ SRC = ${wildcard *.c game/display/*.c } Chat/chat.c game/find_word/markov.c  Cli
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-all: main
+all: digit-dash
 
 -include ${DEP}
 
-main: ${OBJ}
+digit-dash: ${OBJ}
 	$(CC) ${CFLAGS} ${CPPFLAGS} $^ -o $@
 	
 
