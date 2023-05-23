@@ -1,6 +1,6 @@
 #Makefile
 CC = gcc -g 
-CPPFLAGS = -w -lncurses
+CPPFLAGS = -fsanitize=address -w -lncurses
 CFLAGS = -Wall -Wextra -std=c99
 
 
